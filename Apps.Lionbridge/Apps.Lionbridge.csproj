@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Product>Lionbridge</Product>
+		<Description>Lionbridge</Description>
+		<Version>1.0.0</Version>
+		<AssemblyName>Apps.Lionbridge</AssemblyName>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.5.0"/>
+		<PackageReference Include="Blackbird.Applications.Sdk.Utils" Version="1.0.25"/>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+		<PackageReference Include="RestSharp" Version="110.2.0"/>
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="DataSourceHandlers"/>
+		<Folder Include="Actions"/>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="image\icon.png" CopyToOutputDirectory="Always"/>
+	</ItemGroup>
+</Project>
