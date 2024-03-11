@@ -15,10 +15,6 @@
 		<PackageReference Include="RestSharp" Version="110.2.0"/>
 	</ItemGroup>
 	<ItemGroup>
-		<Folder Include="DataSourceHandlers"/>
-		<Folder Include="Actions"/>
-	</ItemGroup>
-	<ItemGroup>
 		<EmbeddedResource Include="image\icon.png" CopyToOutputDirectory="Always"/>
 	</ItemGroup>
 </Project>
