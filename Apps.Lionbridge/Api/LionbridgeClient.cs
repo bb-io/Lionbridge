@@ -1,4 +1,5 @@
-﻿using Apps.Lionbridge.Constants;
+﻿using System.Net;
+using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
 using Blackbird.Applications.Sdk.Common.Authentication;
@@ -20,6 +21,34 @@ public class LionbridgeClient : BlackBirdRestClient
     {
         var accessToken = GetAccessToken(authenticationCredentialsProviders);
         this.AddDefaultHeader("Authorization", $"Bearer {accessToken}"); 
+    }
+
+    public override async Task<RestResponse> ExecuteWithErrorHandling(RestRequest request)
+    {
+        var response = await ExecuteAsync(request);
+
+        if (response.StatusCode == HttpStatusCode.TooManyRequests ||
+            response.StatusCode == HttpStatusCode.ServiceUnavailable)
+        {
+            const int scalingFactor = 2;
+            var retryAfterMilliseconds = 1000;
+
+            for (int i = 0; i < 5; i++)
+            {
+                await Task.Delay(retryAfterMilliseconds);
+                response = await ExecuteAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                    break;
+
+                retryAfterMilliseconds *= scalingFactor;
+            }
+        }
+
+        if (!response.IsSuccessStatusCode)
+            throw ConfigureErrorException(response);
+
+        return response;
     }
 
     protected override Exception ConfigureErrorException(RestResponse response) 
