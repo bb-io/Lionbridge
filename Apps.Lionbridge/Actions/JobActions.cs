@@ -3,6 +3,7 @@ using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
 using Apps.Lionbridge.Models.Requests.Job;
+using Apps.Lionbridge.Models.Requests.Provider;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Invocation;
@@ -42,5 +43,89 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}");
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
+    }
+    
+    [Action("Update job", Description = "Update a translation job")]
+    public async Task<JobDto> UpdateJob([ActionParameter] GetJobRequest jobRequest, [ActionParameter] UpdateJobRequest request)
+    {
+        var apiUpdateRequest = new UpdateJobApiRequest();
+        
+        if(request.JobName != null)
+        {
+            apiUpdateRequest.JobName = request.JobName;
+        }
+        
+        if(request.Description != null)
+        {
+            apiUpdateRequest.Description = request.Description;
+        }
+        
+        if(request.ProviderId != null)
+        {
+            apiUpdateRequest.ProviderId = request.ProviderId;
+        }
+        
+        if(request.MetadataKeys != null && request.MetadataValues != null)
+        {
+            apiUpdateRequest.ExtendedMetadata = EnumerableExtensions.ToDictionary(request.MetadataKeys, request.MetadataValues);
+        }
+        
+        if(request.DueDate != null)
+        {
+            apiUpdateRequest.DueDate = request.DueDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ");
+        }
+        
+        if(request.CustomData != null)
+        {
+            apiUpdateRequest.CustomData = request.CustomData;
+        }
+        
+        if(request.ShouldQuote != null)
+        {
+            apiUpdateRequest.ShouldQuote = request.ShouldQuote;
+        }
+        
+        if(request.ConnectorName != null)
+        {
+            apiUpdateRequest.ConnectorName = request.ConnectorName;
+        }
+        
+        if(request.ConnectorVersion != null)
+        {
+            apiUpdateRequest.ConnectorVersion = request.ConnectorVersion;
+        }
+        
+        if(request.ServiceType != null)
+        {
+            apiUpdateRequest.ServiceType = request.ServiceType;
+        }
+        
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}", Method.Put)
+            .WithJsonBody(apiUpdateRequest);
+
+        return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
+    }
+    
+    [Action("Submit job", Description = "Submit a translation job")]
+    public async Task SubmitJob([ActionParameter] GetJobRequest request, [ActionParameter] GetProviderRequest providerRequest)
+    {
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/submit", Method.Put)
+            .WithJsonBody(new { providerId = providerRequest.ProviderId });
+        
+        await Client.ExecuteWithErrorHandling(apiRequest);
+    }
+    
+    [Action("Archive job", Description = "Archive a translation job")]
+    public async Task ArchiveJob([ActionParameter] GetJobRequest request)
+    {
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/archive", Method.Put);
+        await Client.ExecuteWithErrorHandling(apiRequest);
+    }
+    
+    [Action("Unarchive job", Description = "Unarchive a translation job")]
+    public async Task UnarchiveJob([ActionParameter] GetJobRequest request)
+    {
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/unarchive", Method.Put);
+        await Client.ExecuteWithErrorHandling(apiRequest);
     }
 }
