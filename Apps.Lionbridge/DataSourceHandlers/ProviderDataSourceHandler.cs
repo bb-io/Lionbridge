@@ -6,12 +6,9 @@ using Blackbird.Applications.Sdk.Common.Invocation;
 
 namespace Apps.Lionbridge.DataSourceHandlers;
 
-public class ProviderDataSourceHandler : LionbridgeInvocable, IAsyncDataSourceHandler
+public class ProviderDataSourceHandler(InvocationContext invocationContext)
+    : LionbridgeInvocable(invocationContext), IAsyncDataSourceHandler
 {
-    public ProviderDataSourceHandler(InvocationContext invocationContext) : base(invocationContext)
-    {
-    }
-
     public async Task<Dictionary<string, string>> GetDataAsync(DataSourceContext context, 
         CancellationToken cancellationToken)
     {

@@ -50,6 +50,12 @@ public class LionbridgeClient : BlackBirdRestClient
 
         return response;
     }
+    
+    public override async Task<T> ExecuteWithErrorHandling<T>(RestRequest request)
+    {
+        var response = await ExecuteWithErrorHandling(request);
+        return JsonConvert.DeserializeObject<T>(response.Content, JsonSettings);
+    }
 
     protected override Exception ConfigureErrorException(RestResponse response) 
     {
