@@ -59,18 +59,25 @@ public class LionbridgeClient : BlackBirdRestClient
 
     protected override Exception ConfigureErrorException(RestResponse response) 
     {
-        if (string.IsNullOrWhiteSpace(response.Content))
-            return new(response.StatusCode.ToString());
+        try
+        {
+            if (string.IsNullOrWhiteSpace(response.Content))
+                return new(response.StatusCode.ToString());
         
-        if (!response.Content.IsJson())
+            if (!response.Content.IsJson())
+                return new(response.Content);
+        
+            var error = JsonConvert.DeserializeObject<ErrorDto>(response.Content, JsonSettings);
+
+            if (error != null)
+                return new(error.Message);
+
             return new(response.Content);
-        
-        var error = JsonConvert.DeserializeObject<ErrorDto>(response.Content, JsonSettings);
-
-        if (error != null)
-            return new(error.Message);
-
-        return new(response.Content);
+        }
+        catch (Exception e)
+        {
+            return new Exception($"Error was thrown while executing request, response content: {response.Content}; status code: {response.StatusCode}");
+        }
     }
 
     private string GetAccessToken(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders)

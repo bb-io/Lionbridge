@@ -38,7 +38,7 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
     public async Task<RequestDto> CreateSingleRequest([ActionParameter] AddSourceRequestModel request,
         [ActionParameter] GetJobRequest jobRequest)
     {
-        string sourceContentId = await CreateTranslationContent(request.FieldsKeys, request.FieldsValues);
+        string sourceContentId = await CreateTranslationContent(jobRequest.JobId, request.FieldsKeys, request.FieldsValues);
         
         var metadata = EnumerableExtensions.ToDictionary(request.MetadataKeys, request.MetadataValues);
         var apiRequest =
@@ -129,13 +129,13 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
         return new GetRequestsResponse { Requests = response.Embedded.Requests.ToList() };
     }
 
-    private async Task<string> CreateTranslationContent(IEnumerable<string> keys, IEnumerable<string> values)
+    private async Task<string> CreateTranslationContent(string jobId, IEnumerable<string> keys, IEnumerable<string> values)
     {
         var dictionary = EnumerableExtensions.ToDictionary(keys, values);
-        var listOfKeyValuePairs = dictionary.Select(x => new KeyValuePair<string, string>(x.Key, x.Value))
+        var listOfKeyValuePairs = dictionary.Select(x => new FieldDto { Key = x.Key, Value = x.Value })
             .ToList();
         
-        var apiRequest = new LionbridgeRequest(ApiEndpoints.SourceContent, Method.Post)
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobId}{ApiEndpoints.SourceContent}", Method.Post)
             .WithJsonBody(new
             {
                 fields = listOfKeyValuePairs
