@@ -8,5 +8,14 @@ public class TranslationContentResponse
     public string SourceContentId { get; set; }
     
     [JsonProperty("fields")]
-    public List<KeyValuePair<string, string>> Fields { get; set; }
+    public List<Field> Fields { get; set; }
+}
+
+public class Field
+{
+    [JsonProperty("key")]
+    public string Key { get; set; }
+
+    [JsonProperty("value")]
+    public string Value { get; set; }
 }
