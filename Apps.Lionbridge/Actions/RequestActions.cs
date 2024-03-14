@@ -19,7 +19,18 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
     public async Task<RequestDto> CreateRequest([ActionParameter] AddRequestModel request, [ActionParameter] GetJobRequest jobRequest)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests + ApiEndpoints.Add, Method.Post)
-            .WithJsonBody(request);
+            .WithJsonBody(new
+            {
+                requestName = request.RequestName,
+                sourceNativeId = request.SourceNativeId,
+                sourceNativeLanguageCode = request.SourceNativeLanguageCode,
+                targetNativeIds = request.TargetNativeIds,
+                targetNativeLanguageCodes = request.TargetNativeLanguageCodes,
+                wordCount = request.WordCount,
+                fieldNames = request.FieldNames,
+                fieldValues = request.FieldValues,
+                fieldComments = request.FieldComments
+            });
 
         return await Client.ExecuteWithErrorHandling<RequestDto>(apiRequest);
     }
@@ -27,14 +38,14 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
     [Action("Get request", Description = "Get a translation request.")]
     public async Task<RequestDto> GetRequest([ActionParameter] GetRequest request)
     {
-        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Requests}/{request.RequestId}");
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}" + $"{ApiEndpoints.Requests}/{request.RequestId}");
         return await Client.ExecuteWithErrorHandling<RequestDto>(apiRequest);
     }
 
     [Action("Delete request", Description = "Delete a translation request.")]
     public async Task DeleteRequest([ActionParameter] GetRequest request)
     {
-        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Requests}/{request.RequestId}", Method.Delete);
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}" + $"{ApiEndpoints.Requests}/{request.RequestId}", Method.Delete);
         await Client.ExecuteWithErrorHandling(apiRequest);
     }
     
