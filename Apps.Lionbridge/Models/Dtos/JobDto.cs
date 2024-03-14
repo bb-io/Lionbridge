@@ -48,10 +48,4 @@ public class JobDto
     
     [Display("Global tracking ID")]
     public string GlobalTrackingId { get; set; }
-
-    [Display("Extended metadata")]
-    public Dictionary<string, string> ExtendedMetadata { get; set; }
-    
-    [Display("Labels")]
-    public Dictionary<string, string> Labels { get; set; }
 }

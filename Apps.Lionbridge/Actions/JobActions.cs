@@ -107,25 +107,25 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
     }
     
     [Action("Submit job", Description = "Submit a translation job")]
-    public async Task SubmitJob([ActionParameter] GetJobRequest request, [ActionParameter] GetProviderRequest providerRequest)
+    public async Task<JobDto> SubmitJob([ActionParameter] GetJobRequest request, [ActionParameter] GetProviderRequest providerRequest)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/submit", Method.Put)
             .WithJsonBody(new { providerId = providerRequest.ProviderId });
         
-        await Client.ExecuteWithErrorHandling(apiRequest);
+        return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
     
     [Action("Archive job", Description = "Archive a translation job")]
-    public async Task ArchiveJob([ActionParameter] GetJobRequest request)
+    public async Task<JobDto> ArchiveJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/archive", Method.Put);
-        await Client.ExecuteWithErrorHandling(apiRequest);
+        return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
     
     [Action("Unarchive job", Description = "Unarchive a translation job")]
-    public async Task UnarchiveJob([ActionParameter] GetJobRequest request)
+    public async Task<JobDto> UnarchiveJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/unarchive", Method.Put);
-        await Client.ExecuteWithErrorHandling(apiRequest);
+        return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
 }
