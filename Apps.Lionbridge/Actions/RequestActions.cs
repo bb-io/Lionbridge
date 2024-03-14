@@ -18,7 +18,7 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
     [Action("Get requests", Description = "Get translation requests.")]
     public async Task<GetRequestsResponse> GetRequests([ActionParameter] GetRequestsAsOptional jobRequest)
     {
-        RestRequest apiRequest = null;
+        RestRequest apiRequest;
         if (jobRequest.RequestIds != null && jobRequest.RequestIds.Any())
         {
             apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests,
@@ -95,12 +95,13 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
     }
 
     [Action("Delete request", Description = "Delete a translation request.")]
-    public async Task DeleteRequest([ActionParameter] GetRequest request)
+    public async Task<RequestDto> DeleteRequest([ActionParameter] GetRequest request)
     {
         var apiRequest =
             new LionbridgeRequest(
                 $"{ApiEndpoints.Jobs}/{request.JobId}" + $"{ApiEndpoints.Requests}/{request.RequestId}", Method.Delete);
-        await Client.ExecuteWithErrorHandling(apiRequest);
+        
+        return await Client.ExecuteWithErrorHandling<RequestDto>(apiRequest);
     }
 
     [Action("Approve request", Description = "Approve a translation request")]
