@@ -8,4 +8,6 @@ public static class ApiEndpoints
     public const string Add = "/add";
     public const string Approve = "/approve";
     public const string Reject = "/reject";
+    public const string UpdateContent = "/updatecontent";
+    public const string UpdateFileContent = "/updatefilecontent";
 }

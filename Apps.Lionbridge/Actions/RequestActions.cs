@@ -98,7 +98,7 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
     [Action("Update request content", Description = "Update a translation request content")]
     public async Task<GetRequestsResponse> UpdateRequestContent([ActionParameter]GetRequests request, [ActionParameter] UpdateContentRequest updateRequestContentModel)
     {
-        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}" + ApiEndpoints.Requests, Method.Put)
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}" + ApiEndpoints.Requests + ApiEndpoints.UpdateContent, Method.Put)
             .WithJsonBody(new
             {
                 requestIds = request.RequestIds,
