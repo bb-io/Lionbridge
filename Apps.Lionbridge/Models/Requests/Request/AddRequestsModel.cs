@@ -2,7 +2,7 @@
 
 namespace Apps.Lionbridge.Models.Requests.Request;
 
-public class AddRequestModel
+public class AddRequestsModel
 {
     [Display("Request name")]
     public string RequestName { get; set; }
@@ -16,8 +16,8 @@ public class AddRequestModel
     [Display("Target native IDs")]
     public IEnumerable<string>? TargetNativeIds { get; set; }
     
-    [Display("Target native language")]
-    public string TargetNativeLanguage { get; set; }
+    [Display("Target native languages")]
+    public IEnumerable<string> TargetNativeLanguageCodes { get; set; }
     
     [Display("Word count")]
     public int? WordCount { get; set; } = 0;

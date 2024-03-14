@@ -15,8 +15,8 @@ namespace Apps.Lionbridge.Actions;
 [ActionList]
 public class RequestActions(InvocationContext invocationContext) : LionbridgeInvocable(invocationContext)
 {
-    [Action("Create request", Description = "Create a new translation request.")]
-    public async Task<GetRequestsResponse> CreateRequest([ActionParameter] AddRequestModel request, [ActionParameter] GetJobRequest jobRequest)
+    [Action("Create requests", Description = "Create a new translation requests.")]
+    public async Task<GetRequestsResponse> CreateRequest([ActionParameter] AddRequestsModel request, [ActionParameter] GetJobRequest jobRequest)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests + ApiEndpoints.Add, Method.Post)
             .WithJsonBody(new
@@ -34,6 +34,27 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
 
         var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
         return new GetRequestsResponse { Requests = response.Embedded.Requests.ToList() };
+    }
+    
+    [Action("Create request", Description = "Create a new translation request.")]
+    public async Task<RequestDto> CreateSingleRequest([ActionParameter] AddRequestModel request, [ActionParameter] GetJobRequest jobRequest)
+    {
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests + ApiEndpoints.Add, Method.Post)
+            .WithJsonBody(new
+            {
+                requestName = request.RequestName,
+                sourceNativeId = request.SourceNativeId,
+                sourceNativeLanguageCode = request.SourceNativeLanguageCode,
+                targetNativeIds = request.TargetNativeIds,
+                targetNativeLanguageCodes = new List<string> { request.TargetNativeLanguage },
+                wordCount = request.WordCount,
+                fieldNames = request.FieldNames,
+                fieldValues = request.FieldValues,
+                fieldComments = request.FieldComments
+            });
+
+        var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
+        return response.Embedded.Requests.First();
     }
     
     [Action("Get request", Description = "Get a translation request.")]
