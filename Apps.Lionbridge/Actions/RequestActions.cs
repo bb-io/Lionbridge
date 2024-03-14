@@ -18,24 +18,17 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
     [Action("Get requests", Description = "Get translation requests.")]
     public async Task<GetRequestsResponse> GetRequests([ActionParameter] GetRequestsAsOptional jobRequest)
     {
-        RestRequest apiRequest;
-        if (jobRequest.RequestIds != null && jobRequest.RequestIds.Any())
-        {
-            apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests,
-                    Method.Put)
-                .WithJsonBody(new
-                {
-                    requestIds = jobRequest.RequestIds.ToArray()
-                });
-        }
-        else
-        {
-            apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests,
-                Method.Get);
-        }
+        RestRequest apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests,
+            Method.Get);
 
         var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
-        return new GetRequestsResponse { Requests = response.Embedded.Requests.ToList() };
+        var requests = response.Embedded.Requests.ToList();
+        if(jobRequest.RequestIds != null && jobRequest.RequestIds.Any())
+        {
+            requests = requests.Where(x => jobRequest.RequestIds.Contains(x.RequestId)).ToList();
+        }
+        
+        return new GetRequestsResponse { Requests = requests };
     }
 
     [Action("Create requests", Description = "Create a new translation requests.")]
