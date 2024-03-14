@@ -38,4 +38,7 @@ public class UpdateJobApiRequest
 
     [Display("Extended metadata")]
     public Dictionary<string,string> ExtendedMetadata { get; set; }
+    
+    [Display("Labels")]
+    public Dictionary<string,string> Labels { get; set; }
 }

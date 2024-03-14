@@ -35,4 +35,12 @@ public class UpdateJobRequest
     [Display("Metadata values", Description = "Extended metadata values. For each specified value, a respective " +
                                               "key should be added in the 'Metadata keys' input parameter.")]
     public IEnumerable<string>? MetadataValues { get; set; }
+    
+    [Display("Label keys", Description = "Label keys. For each specified key, a respective value should be added in " +
+                                        "the 'Label values' input parameter.")]
+    public IEnumerable<string>? LabelKeys { get; set; }
+    
+    [Display("Label values", Description = "Label values. For each specified value, a respective key should be added " +
+                                          "in the 'Label keys' input parameter.")]
+    public IEnumerable<string>? LabelValues { get; set; }
 }

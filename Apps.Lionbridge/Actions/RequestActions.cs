@@ -1,9 +1,11 @@
 ﻿using Apps.Lionbridge.Api;
 using Apps.Lionbridge.Constants;
+using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
 using Apps.Lionbridge.Models.Requests.Job;
 using Apps.Lionbridge.Models.Requests.Request;
 using Apps.Lionbridge.Models.Responses.Request;
+using Apps.Lionbridge.Models.Responses.TranslationContent;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Invocation;
@@ -18,47 +20,27 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
     [Action("Get requests", Description = "Get translation requests.")]
     public async Task<GetRequestsResponse> GetRequests([ActionParameter] GetRequestsAsOptional jobRequest)
     {
-        RestRequest apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests,
+        RestRequest apiRequest = new LionbridgeRequest(
+            $"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests,
             Method.Get);
 
         var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
         var requests = response.Embedded.Requests.ToList();
-        if(jobRequest.RequestIds != null && jobRequest.RequestIds.Any())
+        if (jobRequest.RequestIds != null && jobRequest.RequestIds.Any())
         {
             requests = requests.Where(x => jobRequest.RequestIds.Contains(x.RequestId)).ToList();
         }
-        
+
         return new GetRequestsResponse { Requests = requests };
     }
 
-    [Action("Create requests", Description = "Create a new translation requests.")]
-    public async Task<GetRequestsResponse> CreateRequest([ActionParameter] AddRequestsModel request,
+    [Action("Create source content request", Description = "Create a new translation request.")]
+    public async Task<RequestDto> CreateSingleRequest([ActionParameter] AddSourceRequestModel request,
         [ActionParameter] GetJobRequest jobRequest)
     {
-        var apiRequest =
-            new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests + ApiEndpoints.Add,
-                    Method.Post)
-                .WithJsonBody(new
-                {
-                    requestName = request.RequestName,
-                    sourceNativeId = request.SourceNativeId,
-                    sourceNativeLanguageCode = request.SourceNativeLanguageCode,
-                    targetNativeIds = request.TargetNativeIds,
-                    targetNativeLanguageCodes = request.TargetNativeLanguageCodes,
-                    wordCount = request.WordCount,
-                    fieldNames = request.FieldNames,
-                    fieldValues = request.FieldValues,
-                    fieldComments = request.FieldComments
-                });
-
-        var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
-        return new GetRequestsResponse { Requests = response.Embedded.Requests.ToList() };
-    }
-
-    [Action("Create request", Description = "Create a new translation request.")]
-    public async Task<RequestDto> CreateSingleRequest([ActionParameter] AddRequestModel request,
-        [ActionParameter] GetJobRequest jobRequest)
-    {
+        string sourceContentId = await CreateTranslationContent(request.FieldsKeys, request.FieldsValues);
+        
+        var metadata = EnumerableExtensions.ToDictionary(request.MetadataKeys, request.MetadataValues);
         var apiRequest =
             new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests + ApiEndpoints.Add,
                     Method.Post)
@@ -70,9 +52,8 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
                     targetNativeIds = request.TargetNativeIds,
                     targetNativeLanguageCodes = new List<string> { request.TargetNativeLanguage },
                     wordCount = request.WordCount,
-                    fieldNames = request.FieldNames,
-                    fieldValues = request.FieldValues,
-                    fieldComments = request.FieldComments
+                    extendedMetadata = metadata,
+                    sourcecontentId = sourceContentId
                 });
 
         var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
@@ -93,7 +74,7 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
         var apiRequest =
             new LionbridgeRequest(
                 $"{ApiEndpoints.Jobs}/{request.JobId}" + $"{ApiEndpoints.Requests}/{request.RequestId}", Method.Delete);
-        
+
         return await Client.ExecuteWithErrorHandling<RequestDto>(apiRequest);
     }
 
@@ -129,10 +110,13 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
     public async Task<GetRequestsResponse> UpdateRequestContent([ActionParameter] GetRequests request,
         [ActionParameter] UpdateContentRequest updateRequestContentModel)
     {
+        throw new NotImplementedException("This action is not implemented yet.");
+
         var apiRequest =
             new LionbridgeRequest(
-                    $"{ApiEndpoints.Jobs}/{request.JobId}" + ApiEndpoints.Requests + ApiEndpoints.UpdateContent,
-                    Method.Put)
+                    $"{ApiEndpoints.Jobs}/{request.JobId}{ApiEndpoints.Requests}/{request}" + ApiEndpoints.Requests +
+                    ApiEndpoints.UpdateContent,
+                    Method.Patch)
                 .WithJsonBody(new
                 {
                     requestIds = request.RequestIds,
@@ -143,5 +127,21 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
 
         var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
         return new GetRequestsResponse { Requests = response.Embedded.Requests.ToList() };
+    }
+
+    private async Task<string> CreateTranslationContent(IEnumerable<string> keys, IEnumerable<string> values)
+    {
+        var dictionary = EnumerableExtensions.ToDictionary(keys, values);
+        var listOfKeyValuePairs = dictionary.Select(x => new KeyValuePair<string, string>(x.Key, x.Value))
+            .ToList();
+        
+        var apiRequest = new LionbridgeRequest(ApiEndpoints.SourceContent, Method.Post)
+            .WithJsonBody(new
+            {
+                fields = listOfKeyValuePairs
+            });
+        
+        var response = await Client.ExecuteWithErrorHandling<TranslationContentResponse>(apiRequest);
+        return response.SourceContentId;
     }
 }

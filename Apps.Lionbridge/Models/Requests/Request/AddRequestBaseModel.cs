@@ -1,8 +1,9 @@
 ﻿using Blackbird.Applications.Sdk.Common;
+using Blackbird.Applications.Sdk.Common.Files;
 
 namespace Apps.Lionbridge.Models.Requests.Request;
 
-public class AddRequestModel
+public class AddRequestBaseModel
 {
     [Display("Request name")]
     public string RequestName { get; set; }
@@ -16,18 +17,12 @@ public class AddRequestModel
     [Display("Target native IDs")]
     public IEnumerable<string>? TargetNativeIds { get; set; }
     
-    [Display("Target native language")]
-    public string TargetNativeLanguage { get; set; }
-    
     [Display("Word count")]
     public int? WordCount { get; set; } = 0;
+
+    [Display("Metadata keys", Description = "Metadata keys to be added to the request.")]
+    public IEnumerable<string>? MetadataKeys { get; set; }
     
-    [Display("Field names")]
-    public IEnumerable<string>? FieldNames { get; set; }
-    
-    [Display("Field values")]
-    public IEnumerable<string>? FieldValues { get; set; }
-    
-    [Display("Field comments")]
-    public IEnumerable<string>? FieldComments { get; set; }
+    [Display("Metadata values", Description = "Metadata values to be added to the request.")]
+    public IEnumerable<string>? MetadataValues { get; set; }
 }

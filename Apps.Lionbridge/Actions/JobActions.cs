@@ -70,6 +70,11 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
             apiUpdateRequest.ExtendedMetadata = EnumerableExtensions.ToDictionary(request.MetadataKeys, request.MetadataValues);
         }
         
+        if(request.LabelKeys != null && request.LabelValues != null)
+        {
+            apiUpdateRequest.Labels = EnumerableExtensions.ToDictionary(request.LabelKeys, request.LabelValues);
+        }
+        
         if(request.DueDate != null)
         {
             apiUpdateRequest.DueDate = request.DueDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ");
@@ -100,7 +105,7 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
             apiUpdateRequest.ServiceType = request.ServiceType;
         }
         
-        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}", Method.Put)
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}", Method.Patch)
             .WithJsonBody(apiUpdateRequest);
 
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
@@ -126,6 +131,20 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
     public async Task<JobDto> UnarchiveJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/unarchive", Method.Put);
+        return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
+    }
+    
+    [Action("Complete job", Description = "Complete a translation job")]
+    public async Task<JobDto> CompleteJob([ActionParameter] GetJobRequest request)
+    {
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/complete", Method.Put);
+        return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
+    }
+    
+    [Action("Intranslate job", Description = "Set job status to IN_TRANSLATION. Allows further translations from being imported again. Only valid when job is currently COMPLETED")]
+    public async Task<JobDto> IntranslateJob([ActionParameter] GetJobRequest request)
+    {
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/intranslation", Method.Put);
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
 }
