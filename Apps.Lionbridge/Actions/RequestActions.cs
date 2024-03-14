@@ -16,7 +16,7 @@ namespace Apps.Lionbridge.Actions;
 public class RequestActions(InvocationContext invocationContext) : LionbridgeInvocable(invocationContext)
 {
     [Action("Create request", Description = "Create a new translation request.")]
-    public async Task<RequestDto> CreateRequest([ActionParameter] AddRequestModel request, [ActionParameter] GetJobRequest jobRequest)
+    public async Task<GetRequestsResponse> CreateRequest([ActionParameter] AddRequestModel request, [ActionParameter] GetJobRequest jobRequest)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests + ApiEndpoints.Add, Method.Post)
             .WithJsonBody(new
@@ -32,7 +32,8 @@ public class RequestActions(InvocationContext invocationContext) : LionbridgeInv
                 fieldComments = request.FieldComments
             });
 
-        return await Client.ExecuteWithErrorHandling<RequestDto>(apiRequest);
+        var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
+        return new GetRequestsResponse { Requests = response.Embedded.Requests.ToList() };
     }
     
     [Action("Get request", Description = "Get a translation request.")]
