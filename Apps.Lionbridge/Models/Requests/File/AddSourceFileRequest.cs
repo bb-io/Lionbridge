@@ -13,10 +13,4 @@ public class AddSourceFileRequest : AddRequestBaseModel
     
     [Display("Target native language")]
     public string TargetNativeLanguage { get; set; }
-
-    [Display("Fields keys", Description = "Fields keys to be added to the request.")]
-    public IEnumerable<string> FieldsKeys { get; set; }
-    
-    [Display("Fields values", Description = "Fields values to be added to the request.")]
-    public IEnumerable<string> FieldsValues { get; set; }
 }

@@ -12,4 +12,5 @@ public static class ApiEndpoints
     public const string UpdateFileContent = "/updatefilecontent";
     public const string SourceContent = "/sourcecontent";
     public const string SourceFiles = "/sourcefiles";
+    public const string RetrieveFile = "/retrievefile";
 }

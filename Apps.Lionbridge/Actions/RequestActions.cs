@@ -96,9 +96,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
     [Action("Get request", Description = "Get a translation request.")]
     public async Task<RequestDto> GetRequest([ActionParameter] GetRequest request)
     {
-        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}" +
-                                               $"{ApiEndpoints.Requests}/{request.RequestId}");
-        return await Client.ExecuteWithErrorHandling<RequestDto>(apiRequest);
+        return await GetRequest(request.JobId, request.RequestId);
     }
 
     [Action("Delete request", Description = "Delete a translation request.")]
