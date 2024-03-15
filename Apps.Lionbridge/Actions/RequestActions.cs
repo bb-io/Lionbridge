@@ -66,7 +66,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
         return response.Embedded.Requests.First();
     }
 
-    [Action("Create source content request", Description = "Create a new translation request.")]
+    [Action("Create file request", Description = "Create a new translation request.")]
     public async Task<RequestDto> CreateFileRequest([ActionParameter] GetJobRequest jobRequest,
         [ActionParameter] AddSourceFileRequest sourceFileRequest)
     {
