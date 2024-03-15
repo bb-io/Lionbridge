@@ -14,8 +14,6 @@ public class UpdateJobRequest
 
     [Display("Due date")] public DateTime? DueDate { get; set; }
 
-    [Display("Custom data")] public string? CustomData { get; set; }
-
     [Display("Should quote")] public bool? ShouldQuote { get; set; }
 
     [Display("Provider ID")]

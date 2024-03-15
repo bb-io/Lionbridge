@@ -80,11 +80,6 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
             apiUpdateRequest.DueDate = request.DueDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ");
         }
         
-        if(request.CustomData != null)
-        {
-            apiUpdateRequest.CustomData = request.CustomData;
-        }
-        
         if(request.ShouldQuote != null)
         {
             apiUpdateRequest.ShouldQuote = request.ShouldQuote;
@@ -106,7 +101,19 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         }
         
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}", Method.Patch)
-            .WithJsonBody(apiUpdateRequest);
+            .WithJsonBody(new
+            {
+                jobName = apiUpdateRequest.JobName,
+                description = apiUpdateRequest.Description,
+                providerId = apiUpdateRequest.ProviderId,
+                extendedMetadata = apiUpdateRequest.ExtendedMetadata,
+                labels = apiUpdateRequest.Labels,
+                dueDate = apiUpdateRequest.DueDate,
+                shouldQuote = apiUpdateRequest.ShouldQuote,
+                connectorName = apiUpdateRequest.ConnectorName,
+                connectorVersion = apiUpdateRequest.ConnectorVersion,
+                serviceType = apiUpdateRequest.ServiceType
+            });
 
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
