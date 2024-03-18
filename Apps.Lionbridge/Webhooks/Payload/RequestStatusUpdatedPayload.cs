@@ -2,7 +2,7 @@
 
 public class RequestStatusUpdatedPayload
 {
-    public IEnumerable<string>? RequestIds { get; set; }
+    public List<string>? RequestIds { get; set; }
     
     public string StatusCode { get; set; }
     
