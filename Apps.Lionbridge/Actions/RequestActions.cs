@@ -2,6 +2,7 @@
 using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
+using Apps.Lionbridge.Models.Requests;
 using Apps.Lionbridge.Models.Requests.File;
 using Apps.Lionbridge.Models.Requests.Job;
 using Apps.Lionbridge.Models.Requests.Request;
@@ -68,7 +69,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
     public async Task<RequestDto> CreateFileRequest([ActionParameter] GetJobRequest jobRequest,
         [ActionParameter] AddSourceFileRequest sourceFileRequest)
     {
-        var uploadResponse = await UploadFmsFile(jobRequest.JobId, sourceFileRequest, fileManagementClient);
+        var uploadResponse = await UploadFmsFile(jobRequest.JobId, new AddFileRequest(sourceFileRequest), fileManagementClient);
 
         var metadata =
             EnumerableExtensions.ToDictionary(sourceFileRequest.MetadataKeys, sourceFileRequest.MetadataValues);

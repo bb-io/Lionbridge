@@ -1,6 +1,7 @@
 ﻿using Apps.Lionbridge.Api;
 using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Models.Dtos;
+using Apps.Lionbridge.Models.Requests;
 using Apps.Lionbridge.Models.Requests.File;
 using Apps.Lionbridge.Models.Responses.SourceFile;
 using Blackbird.Applications.Sdk.Common;
@@ -26,7 +27,7 @@ public class LionbridgeInvocable : BaseInvocable
         return await Client.ExecuteWithErrorHandling<RequestDto>(apiRequest);
     }
     
-    protected async Task<UploadSourceFileResponse> UploadFmsFile(string jobId, AddSourceFileRequest fileRequest, IFileManagementClient fileManagementClient)
+    protected async Task<UploadSourceFileResponse> UploadFmsFile(string jobId, AddFileRequest fileRequest, IFileManagementClient fileManagementClient)
     {
         string fileName = fileRequest.FileName ?? fileRequest.File.Name;
 

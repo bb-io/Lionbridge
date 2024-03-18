@@ -2,7 +2,7 @@
 using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
-using Apps.Lionbridge.Models.Requests.File;
+using Apps.Lionbridge.Models.Requests;
 using Apps.Lionbridge.Models.Requests.Job;
 using Apps.Lionbridge.Models.Requests.SupportAssets;
 using Apps.Lionbridge.Models.Responses.SupportAssets;
@@ -40,7 +40,7 @@ public class SupportAssetsActions(InvocationContext invocationContext, IFileMana
     [Action("Add support asset", Description = "Add a support asset to a job")]
     public async Task<SupportAssetResponse> AddSupportAsset([ActionParameter] GetJobRequest request,
         [ActionParameter] AddSupportAssetRequest addSupportAssetRequest,
-        [ActionParameter] AddSourceFileRequest fileRequest)
+        [ActionParameter] AddFileRequest fileRequest)
     {
         var uploadResponse = await UploadFmsFile(request.JobId, fileRequest, fileManagementClient);
 

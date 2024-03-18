@@ -2,6 +2,7 @@
 using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
+using Apps.Lionbridge.Models.Requests;
 using Apps.Lionbridge.Models.Requests.File;
 using Apps.Lionbridge.Models.Requests.Job;
 using Apps.Lionbridge.Models.Requests.TranslationMemory;
@@ -21,7 +22,7 @@ public class TranslationMemoryActions(InvocationContext invocationContext, IFile
     [Action("Add translation memory", Description = "Add a translation memory to a job")]
     public async Task<TranslationMemoryResponse> AddTranslationMemory([ActionParameter] GetJobRequest request,
         [ActionParameter] AddTranslationMemoryRequest addTranslationMemoryRequest,
-        [ActionParameter] AddSourceFileRequest fileRequest)
+        [ActionParameter] AddFileRequest fileRequest)
     {
         var uploadResponse = await UploadFmsFile(request.JobId, fileRequest, fileManagementClient);
         string endpoint = $"{ApiEndpoints.Jobs}/{request.JobId}{ApiEndpoints.TranslationMemories}";
@@ -32,7 +33,7 @@ public class TranslationMemoryActions(InvocationContext invocationContext, IFile
             {
                 fmsFileId = uploadResponse.FmsFileId,
                 sourceNativeLanguageCode = addTranslationMemoryRequest.SourceNativeLanguageCode,
-                targetNativeLanguageCode = addTranslationMemoryRequest.TargetNativeLanguageCode,
+                targetNativeLanguageCode = fileRequest.TargetNativeLanguage,
                 extendedMetadata = extendedMetadata
             });
         
