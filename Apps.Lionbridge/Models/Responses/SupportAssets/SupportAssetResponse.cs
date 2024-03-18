@@ -33,10 +33,10 @@ public class SupportAssetResponse
     public DateTime CreatedDate { get; set; }
     
     [Display("Extended metadata keys")]
-    public string[] ExtendedMetadataKeys { get; set; }
+    public IEnumerable<string> ExtendedMetadataKeys { get; set; }
     
     [Display("Extended metadata values")]
-    public string[] ExtendedMetadataValues { get; set; }
+    public IEnumerable<string> ExtendedMetadataValues { get; set; }
 
     public SupportAssetResponse(SupportAssetDto supportAssetDto)
     {
