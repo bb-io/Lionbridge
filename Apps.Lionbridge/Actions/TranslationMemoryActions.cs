@@ -3,7 +3,6 @@ using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
 using Apps.Lionbridge.Models.Requests;
-using Apps.Lionbridge.Models.Requests.File;
 using Apps.Lionbridge.Models.Requests.Job;
 using Apps.Lionbridge.Models.Requests.TranslationMemory;
 using Apps.Lionbridge.Models.Responses.TranslationMemory;

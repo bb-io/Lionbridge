@@ -160,12 +160,19 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
         return response;
     }
 
-    private async Task<string> CreateTranslationContent(string jobId, IEnumerable<string> keys,
-        IEnumerable<string> values)
+    private async Task<string> CreateTranslationContent(string jobId, IEnumerable<string>? keys,
+        IEnumerable<string>? values)
     {
-        var dictionary = EnumerableExtensions.ToDictionary(keys, values);
-        var listOfKeyValuePairs = dictionary.Select(x => new FieldDto { Key = x.Key, Value = x.Value })
-            .ToList();
+        var listOfKeyValuePairs = new List<FieldDto>();
+        if(keys != null && values != null)
+        {
+            if(keys.Count() != values.Count())
+            {
+                throw new Exception("Keys and values count must be equal");
+            }
+            
+            listOfKeyValuePairs = keys.Zip(values, (k, v) => new FieldDto { Key = k, Value = v }).ToList();
+        }
 
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobId}{ApiEndpoints.SourceContent}", Method.Post)
             .WithJsonBody(new

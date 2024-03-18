@@ -7,7 +7,7 @@ public class AddSupportAssetRequest
 {
     public string? Description { get; set; }
 
-    [Display("Source native language")]
+    [Display("Source native IDs")]
     public IEnumerable<string> SourceNativeIds { get; set; }
     
     [Display("Source native language code")]
