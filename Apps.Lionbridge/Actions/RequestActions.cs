@@ -6,11 +6,9 @@ using Apps.Lionbridge.Models.Requests.File;
 using Apps.Lionbridge.Models.Requests.Job;
 using Apps.Lionbridge.Models.Requests.Request;
 using Apps.Lionbridge.Models.Responses.Request;
-using Apps.Lionbridge.Models.Responses.SourceFile;
 using Apps.Lionbridge.Models.Responses.TranslationContent;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
-using Blackbird.Applications.Sdk.Common.Files;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
 using Blackbird.Applications.Sdk.Utils.Extensions.Http;
@@ -70,7 +68,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
     public async Task<RequestDto> CreateFileRequest([ActionParameter] GetJobRequest jobRequest,
         [ActionParameter] AddSourceFileRequest sourceFileRequest)
     {
-        var uploadResponse = await UploadFmsFile(jobRequest.JobId, sourceFileRequest);
+        var uploadResponse = await UploadFmsFile(jobRequest.JobId, sourceFileRequest, fileManagementClient);
 
         var metadata =
             EnumerableExtensions.ToDictionary(sourceFileRequest.MetadataKeys, sourceFileRequest.MetadataValues);
@@ -176,35 +174,5 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
 
         var response = await Client.ExecuteWithErrorHandling<TranslationContentResponse>(apiRequest);
         return response.SourceContentId;
-    }
-
-    private async Task<UploadSourceFileResponse> UploadFmsFile(string jobId, AddSourceFileRequest fileRequest)
-    {
-        string fileName = fileRequest.FileName ?? fileRequest.File.Name;
-
-        string endpoint = $"{ApiEndpoints.Jobs}/{jobId}{ApiEndpoints.SourceFiles}?fileName={fileName}";
-        var apiRequest = new LionbridgeRequest(endpoint, Method.Post);
-
-        var response = await Client.ExecuteWithErrorHandling<UploadSourceFileResponse>(apiRequest);
-
-        string fmsMultipartUrl = response.FmsPostMultipartUrl;
-
-        var fileStream = await fileManagementClient.DownloadAsync(fileRequest.File);
-        var memoryStream = new MemoryStream();
-        await fileStream.CopyToAsync(memoryStream);
-
-        var bytes = memoryStream.ToArray();
-
-        var client = new RestClient(fmsMultipartUrl);
-        var request = new RestRequest(string.Empty, Method.Post);
-        request.AddFile("file", bytes, fileName);
-
-        var uploadFileResponse = await client.ExecuteAsync(request);
-        if (!uploadFileResponse.IsSuccessful)
-        {
-            throw new Exception("Failed to upload file to FMS on second step");
-        }
-
-        return response;
     }
 }
