@@ -20,6 +20,11 @@ public class SupportAssetDataSourceHandler : LionbridgeInvocable, IAsyncDataSour
     public async Task<Dictionary<string, string>> GetDataAsync(DataSourceContext context, 
         CancellationToken cancellationToken)
     {
+        if(string.IsNullOrEmpty(_jobId))
+        {
+            throw new InvalidOperationException("You should provide a Job ID first");
+        }
+        
         var endpoint = $"{ApiEndpoints.Jobs}/{_jobId}{ApiEndpoints.SupportAssets}";
         var request = new LionbridgeRequest(endpoint);
         

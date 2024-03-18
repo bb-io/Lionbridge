@@ -14,4 +14,5 @@ public static class ApiEndpoints
     public const string SourceFiles = "/sourcefiles";
     public const string RetrieveFile = "/retrievefile";
     public const string SupportAssets = "/supportassets";
+    public const string TranslationMemories = "/tmupdates";
 }
