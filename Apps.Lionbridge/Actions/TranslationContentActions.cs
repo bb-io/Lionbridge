@@ -1,0 +1,57 @@
+﻿using Apps.Lionbridge.Api;
+using Apps.Lionbridge.Constants;
+using Apps.Lionbridge.Models.Requests.Job;
+using Apps.Lionbridge.Models.Requests.Request;
+using Apps.Lionbridge.Models.Requests.TranslationContent;
+using Apps.Lionbridge.Models.Responses.TranslationContent;
+using Blackbird.Applications.Sdk.Common;
+using Blackbird.Applications.Sdk.Common.Actions;
+using Blackbird.Applications.Sdk.Common.Invocation;
+using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
+using RestSharp;
+
+namespace Apps.Lionbridge.Actions;
+
+[ActionList]
+public class TranslationContentActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
+    : LionbridgeInvocable(invocationContext)
+{
+    [Action("Get translation content", Description = "Get translation source content for a job")]
+    public async Task<TranslationContentResponse> GetAllTranslationContent([ActionParameter] GetJobRequest request,
+        [ActionParameter, Display("Source content ID")] string sourceContentId)
+    {
+        string endpoint = $"{ApiEndpoints.Jobs}/{request.JobId}{ApiEndpoints.TranslationContent}/{sourceContentId}";
+        var apiRequest = new LionbridgeRequest(endpoint);
+
+        var dto = await Client.ExecuteWithErrorHandling<TranslationContentDtoResponse>(apiRequest);
+        return new TranslationContentResponse(dto);
+    }
+    
+    [Action("Update translation content", Description = "Replace source content in a job.")]
+    public async Task<TranslationContentResponse> UpdateTranslationContent([ActionParameter] GetJobRequest request,
+        [ActionParameter, Display("Source content ID")] string sourceContentId,
+        [ActionParameter] UpdateTranslationContentRequest updateTranslationContentRequest)
+    {
+        string endpoint = $"{ApiEndpoints.Jobs}/{request.JobId}{ApiEndpoints.TranslationContent}/{sourceContentId}";
+        var keyValuePairs = CreateListOfKeyValuePairs(updateTranslationContentRequest.FieldKeys, updateTranslationContentRequest.FieldValues);
+        
+        var apiRequest = new LionbridgeRequest(endpoint, Method.Put)
+            .AddJsonBody(new
+            {
+                fields = keyValuePairs
+            });
+        
+        var dto = await Client.ExecuteWithErrorHandling<TranslationContentDtoResponse>(apiRequest);
+        return new TranslationContentResponse(dto);
+    }
+    
+    [Action("Retrieve source content", Description = "Retrieve the target content for translation request(s).")]
+    public async Task<RetrieveTranslationContentForRequestResponse> RetrieveTranslationContent([ActionParameter] GetRequest request)
+    {
+        string endpoint = $"{ApiEndpoints.Jobs}/{request.JobId}{ApiEndpoints.Requests}/{request.RequestId}{ApiEndpoints.Retrieve}";
+        
+        var apiRequest = new LionbridgeRequest(endpoint);
+        var dto = await Client.ExecuteWithErrorHandling<RetrieveTranslationContentMultiplyResponse>(apiRequest);
+        return new RetrieveTranslationContentForRequestResponse(dto);
+    }
+}

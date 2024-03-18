@@ -10,9 +10,10 @@ public static class ApiEndpoints
     public const string Reject = "/reject";
     public const string UpdateContent = "/updatecontent";
     public const string UpdateFileContent = "/updatefilecontent";
-    public const string SourceContent = "/sourcecontent";
+    public const string TranslationContent = "/sourcecontent";
     public const string SourceFiles = "/sourcefiles";
     public const string RetrieveFile = "/retrievefile";
     public const string SupportAssets = "/supportassets";
     public const string TranslationMemories = "/tmupdates";
+    public const string Retrieve = "/retrieve";
 }

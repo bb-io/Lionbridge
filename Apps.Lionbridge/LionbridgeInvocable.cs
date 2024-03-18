@@ -56,4 +56,14 @@ public class LionbridgeInvocable : BaseInvocable
 
         return response;
     }
+    
+    protected List<FieldDto> CreateListOfKeyValuePairs(IEnumerable<string> keys, IEnumerable<string> values)
+    {
+        if(keys.Count() != values.Count())
+        {
+            throw new Exception("Keys and values count must be equal");
+        }
+        
+        return keys.Zip(values, (k, v) => new FieldDto { Key = k, Value = v }).ToList();
+    }
 }
