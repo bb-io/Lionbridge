@@ -12,4 +12,8 @@ public class JobStatusUpdatedInput
 
     [Display("Job ID"), DataSource(typeof(JobDataSourceHandler))]
     public string? JobId { get; set; }
+
+    public bool? Archived { get; set; }
+    
+    public bool? Deleted { get; set; }
 }

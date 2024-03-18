@@ -7,6 +7,5 @@ public class JobStatuses : EnumDataHandler
     protected override Dictionary<string, string> EnumValues => new()
     {
         { "IN_TRANSLATION", "In translation" },
-        { "REVIEW_TRANSLATION", "Review translation"}
     };
 }
