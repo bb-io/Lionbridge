@@ -21,7 +21,7 @@ public class SupportAssetsActions(InvocationContext invocationContext, IFileMana
     [Action("Get support asset", Description = "Get a support asset.")]
     public async Task<SupportAssetResponse> GetSupportAsset([ActionParameter] GetSupportAssetRequest request)
     {
-        string endpoint = $"{ApiEndpoints.Jobs}/{request.JobId}{ApiEndpoints.SupportAssets}/{request.SupportAssetId}";
+        string endpoint = $"{ApiEndpoints.Jobs}/{request.LionBridgeJobId}{ApiEndpoints.SupportAssets}/{request.SupportAssetId}";
         var apiRequest = new LionbridgeRequest(endpoint);
 
         var dto = await Client.ExecuteWithErrorHandling<SupportAssetDto>(apiRequest);
@@ -31,7 +31,7 @@ public class SupportAssetsActions(InvocationContext invocationContext, IFileMana
     [Action("Delete support asset", Description = "Delete a support asset.")]
     public async Task DeleteSupportAsset([ActionParameter] GetSupportAssetRequest request)
     {
-        string endpoint = $"{ApiEndpoints.Jobs}/{request.JobId}{ApiEndpoints.SupportAssets}/{request.SupportAssetId}";
+        string endpoint = $"{ApiEndpoints.Jobs}/{request.LionBridgeJobId}{ApiEndpoints.SupportAssets}/{request.SupportAssetId}";
         var apiRequest = new LionbridgeRequest(endpoint, Method.Delete);
 
         await Client.ExecuteWithErrorHandling(apiRequest);
