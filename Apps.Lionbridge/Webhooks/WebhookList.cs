@@ -71,7 +71,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
             "Check for updates on requests, as you are directly informed when the request is finished or cancelled")]
     public async Task<WebhookResponse<RequestStatusUpdatedResponse>> OnRequestStatusUpdated(
         WebhookRequest webhookRequest, [WebhookParameter] RequestStatusUpdatedInput input,
-        [WebhookParameter] GetRequests requests)
+        [WebhookParameter] GetRequestsInput requests)
     {
         var data = JsonConvert.DeserializeObject<RequestStatusUpdatedPayload>(webhookRequest.Body.ToString());
         if (data is null)
