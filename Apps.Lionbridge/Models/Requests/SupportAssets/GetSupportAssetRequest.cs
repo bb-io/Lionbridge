@@ -7,7 +7,7 @@ namespace Apps.Lionbridge.Models.Requests.SupportAssets;
 public class GetSupportAssetRequest
 {
     [Display("Job ID"), DataSource(typeof(JobDataSourceHandler))]
-    public string JobId { get; set; }
+    public string LionBridgeJobId { get; set; }
     
     [Display("Support asset ID"), DataSource(typeof(SupportAssetDataSourceHandler))]
     public string SupportAssetId { get; set; }

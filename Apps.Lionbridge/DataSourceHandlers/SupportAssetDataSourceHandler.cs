@@ -14,7 +14,7 @@ public class SupportAssetDataSourceHandler : LionbridgeInvocable, IAsyncDataSour
     
     public SupportAssetDataSourceHandler(InvocationContext invocationContext, [ActionParameter] GetSupportAssetRequest request) : base(invocationContext)
     {
-        _jobId = request.JobId;
+        _jobId = request.LionBridgeJobId;
     }
     
     public async Task<Dictionary<string, string>> GetDataAsync(DataSourceContext context, 
