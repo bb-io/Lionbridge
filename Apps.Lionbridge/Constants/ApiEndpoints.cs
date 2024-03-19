@@ -16,4 +16,6 @@ public static class ApiEndpoints
     public const string SupportAssets = "/supportassets";
     public const string TranslationMemories = "/tmupdates";
     public const string Retrieve = "/retrieve";
+    public const string StatusUpdates = "/statusupdates";
+    public const string Listeners = StatusUpdates + "/listeners";
 }

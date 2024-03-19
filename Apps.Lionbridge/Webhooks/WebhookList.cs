@@ -1,7 +1,7 @@
 ﻿using Apps.Lionbridge.Api;
 using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Models.Dtos;
-using Apps.Lionbridge.Models.Requests.Request;
+using Apps.Lionbridge.Webhooks.Handlers;
 using Apps.Lionbridge.Webhooks.Inputs;
 using Apps.Lionbridge.Webhooks.Payload;
 using Apps.Lionbridge.Webhooks.Responses;
@@ -16,7 +16,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
 {
     #region Job Webhooks
 
-    [Webhook("Job status updated",
+    [Webhook("Job status updated", typeof(JobStatusUpdatedHandler),
         Description = "Check for updates on jobs, as you are directly informed when the job is finished or cancelled")]
     public async Task<WebhookResponse<JobStatusUpdatedResponse>> OnJobStatusUpdated(WebhookRequest webhookRequest,
         [WebhookParameter] JobStatusUpdatedInput input)
@@ -35,15 +35,15 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
         {
             return preflightResponse;
         }
-        
+
         bool archived = input.Archived ?? false;
-        if(archived != data.Archived)
+        if (archived != data.Archived)
         {
             return preflightResponse;
         }
-        
+
         bool deleted = input.Deleted ?? false;
-        if(deleted != data.Deleted)
+        if (deleted != data.Deleted)
         {
             return preflightResponse;
         }
@@ -66,7 +66,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
 
     #region Request Webhooks
 
-    [Webhook("On request status updated",
+    [Webhook("On request status updated", typeof(RequestStatusUpdatedHandler),
         Description =
             "Check for updates on requests, as you are directly informed when the request is finished or cancelled")]
     public async Task<WebhookResponse<RequestStatusUpdatedResponse>> OnRequestStatusUpdated(
@@ -81,7 +81,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
             HttpResponseMessage = null,
             ReceivedWebhookRequestType = WebhookRequestType.Preflight
         };
-        
+
         if (!string.IsNullOrEmpty(requests.JobId) && requests.JobId != data.JobId)
         {
             return preflightResponse;
@@ -108,7 +108,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobId}");
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
-    
+
     private async Task<List<RequestDto>> GetRequests(string jobId, IEnumerable<string> requestIds)
     {
         var requests = new List<RequestDto>();
@@ -118,7 +118,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
             var request = await GetRequest(jobId, requestId);
             requests.Add(request);
         }
-        
+
         return requests;
     }
 }
