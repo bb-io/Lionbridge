@@ -3,7 +3,12 @@ using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Models.Dtos;
 using Apps.Lionbridge.Models.Requests;
 using Apps.Lionbridge.Models.Requests.File;
+using Apps.Lionbridge.Models.Requests.Job;
+using Apps.Lionbridge.Models.Requests.Request;
+using Apps.Lionbridge.Models.Responses.Request;
 using Apps.Lionbridge.Models.Responses.SourceFile;
+using Apps.Lionbridge.Models.Responses.StatusUpdates;
+using Apps.Lionbridge.Models.Responses.TranslationContent;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
@@ -65,5 +70,63 @@ public class LionbridgeInvocable : BaseInvocable
         }
         
         return keys.Zip(values, (k, v) => new FieldDto { Key = k, Value = v }).ToList();
+    }
+    
+    protected async Task WaitUntilJobIsCompleted(string jobId, string providerId, string[] requestIds)
+    {
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Providers}/{providerId}{ApiEndpoints.StatusUpdates}" );
+
+        StatusUpdateDto? statusUpdate = null;
+        var foundRequestIds = new List<string>();
+        
+        int attempts = 0;
+        do
+        {
+            var statusUpdates = await Client.ExecuteWithErrorHandling<StatusUpdatesResponse>(apiRequest);
+            statusUpdate = statusUpdates.Embedded.statusupdates.FirstOrDefault(j => j.JobId == jobId);
+
+            if (statusUpdate != null)
+            {
+                if (statusUpdate.StatusCode == "IN_TRANSLATION" || statusUpdate.StatusCode == "CANCELLED")
+                {
+                    foundRequestIds.AddRange(statusUpdate.RequestIds);
+                }
+            }
+            
+            if (foundRequestIds.Count == requestIds.Length)
+            {
+                return;
+            }
+            
+            await Task.Delay(5000);
+            attempts++;
+        } while (attempts < 40);
+        
+        throw new Exception("Job did not complete in time");
+    }
+    
+    protected async Task<TranslationContentResponse> GetAllTranslationContent(string jobId, string sourceContentId)
+    {
+        string endpoint = $"{ApiEndpoints.Jobs}/{jobId}{ApiEndpoints.TranslationContent}/{sourceContentId}";
+        var apiRequest = new LionbridgeRequest(endpoint);
+
+        var dto = await Client.ExecuteWithErrorHandling<TranslationContentDtoResponse>(apiRequest);
+        return new TranslationContentResponse(dto);
+    }
+    
+    protected async Task<GetRequestsResponse> GetRequests(GetRequestsAsOptional jobRequest)
+    {
+        RestRequest apiRequest = new LionbridgeRequest(
+            $"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests,
+            Method.Get);
+
+        var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
+        var requests = response.Embedded.Requests.ToList();
+        if (jobRequest.RequestIds != null && jobRequest.RequestIds.Any())
+        {
+            requests = requests.Where(x => jobRequest.RequestIds.Contains(x.RequestId)).ToList();
+        }
+
+        return new GetRequestsResponse { Requests = requests };
     }
 }

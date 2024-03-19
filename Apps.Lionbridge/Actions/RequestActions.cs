@@ -24,18 +24,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
     [Action("Get requests", Description = "Get translation requests.")]
     public async Task<GetRequestsResponse> GetRequests([ActionParameter] GetRequestsAsOptional jobRequest)
     {
-        RestRequest apiRequest = new LionbridgeRequest(
-            $"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests,
-            Method.Get);
-
-        var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
-        var requests = response.Embedded.Requests.ToList();
-        if (jobRequest.RequestIds != null && jobRequest.RequestIds.Any())
-        {
-            requests = requests.Where(x => jobRequest.RequestIds.Contains(x.RequestId)).ToList();
-        }
-
-        return new GetRequestsResponse { Requests = requests };
+        return await GetRequests(jobRequest);
     }
 
     [Action("Create source content request", Description = "Create a new translation request.")]
