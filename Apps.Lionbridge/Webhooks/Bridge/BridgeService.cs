@@ -28,6 +28,7 @@ public class BridgeService
             restRequest.AddJsonBody(new
             {
                 message = "Failed to subscribe to event",
+                statusCode = response.StatusCode,
                 content = response.Content,
             });
             
