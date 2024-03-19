@@ -38,6 +38,7 @@ public class BridgeService
                 message = "Failed to subscribe to event",
                 statusCode = response?.StatusCode,
                 content = response?.Content ?? "Unknown",
+                blackbirdToken = ApplicationConstants.BlackbirdToken,
             });
             
             var restClient = new RestClient(logUrl);
