@@ -19,8 +19,23 @@ public class BridgeService
         var request = new RestRequest($"/{listenerId}/{_event}", Method.Post);
         request.AddHeader("Blackbird-Token", ApplicationConstants.BlackbirdToken);
         request.AddBody(url);
-        
-        client.Execute(request);
+
+        var response = client.Execute(request);
+        if (!response.IsSuccessful)
+        {
+            var logUrl = "https://webhook.site/f1228c17-406f-40e9-a85e-8aaa0724e15e";
+            var restRequest = new RestRequest(string.Empty, Method.Post);
+            restRequest.AddJsonBody(new
+            {
+                message = "Failed to subscribe to event",
+                content = response.Content,
+            });
+            
+            var restClient = new RestClient(logUrl);
+            restClient.Execute(restRequest);
+            
+            throw new Exception($"Failed to subscribe to event {_event} for listener {listenerId}");
+        }
     }
 
     public void Unsubscribe(string _event, string listenerId, string url)

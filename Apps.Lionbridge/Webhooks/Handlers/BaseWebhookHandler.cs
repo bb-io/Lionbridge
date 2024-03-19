@@ -53,7 +53,7 @@ public class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
     
     private async Task<ListenerDto?> GetListenerIdAsync()
     {
-        var request = new LionbridgeRequest(ApiEndpoints.Listeners, Method.Get);
+        var request = new LionbridgeRequest(ApiEndpoints.Listeners);
         var response = await Client.ExecuteWithErrorHandling<ListenersResponse>(request);
         
         return response.Embedded.Listeners.FirstOrDefault(x => x.Type == SubscriptionEvent);
@@ -68,7 +68,7 @@ public class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
                 type = SubscriptionEvent,
                 statusCodes = new []
                 {
-                    "IN_TRANSLATION" // TODO: change in the future
+                    "IN_TRANSLATION"
                 },
                 acknowledgeStatusUpdate = true
             });
