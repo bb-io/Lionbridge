@@ -2,12 +2,12 @@
 
 namespace Apps.Lionbridge.DataSourceHandlers.EnumDataHandlers;
 
-public class JobStatuses : EnumDataHandler
+public class RequestStatuses : EnumDataHandler
 {
     protected override Dictionary<string, string> EnumValues => new()
     {
         { "IN_TRANSLATION", "In translation" },
+        { "REVIEW_TRANSLATION", "Review translation" },
         { "CANCELLED", "Cancelled" },
-        { "SENT_TO_PROVIDER", "Sent to provider" }
     };
 }

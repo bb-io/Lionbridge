@@ -13,6 +13,6 @@ public class GetRequestsInput
     [Display("Request IDs"), DataSource(typeof(RequestDataSourceHandler))]
     public IEnumerable<string>? RequestIds { get; set; }
     
-    [Display("Status codes"), DataSource(typeof(JobStatuses))]
+    [Display("Status codes"), DataSource(typeof(RequestStatuses))]
     public IEnumerable<string>? StatusCodes { get; set; }
 }
