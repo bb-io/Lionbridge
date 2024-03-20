@@ -49,7 +49,7 @@ public class SupportAssetsActions(InvocationContext invocationContext, IFileMana
         var apiRequest = new LionbridgeRequest(endpoint, Method.Post)
             .AddJsonBody(new
             {
-                fmsFileId = uploadResponse.FmsFileId,
+                fmsFileId = uploadResponse.FmsFileId ?? throw new Exception("FMS file ID is missing"),
                 description = addSupportAssetRequest.Description,
                 sourceNativeIds = addSupportAssetRequest.SourceNativeIds ?? new List<string> { Guid.NewGuid().ToString() },
                 sourceNativeLanguageCode = addSupportAssetRequest.SourceNativeLanguageCode,

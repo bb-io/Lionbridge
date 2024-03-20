@@ -44,7 +44,7 @@ public class LionbridgeInvocable : BaseInvocable
         string fmsMultipartUrl = response.FmsPostMultipartUrl;
 
         var fileStream = await fileManagementClient.DownloadAsync(fileRequest.File);
-        var memoryStream = new MemoryStream();
+        using var memoryStream = new MemoryStream();
         await fileStream.CopyToAsync(memoryStream);
 
         var bytes = memoryStream.ToArray();
