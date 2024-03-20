@@ -47,6 +47,12 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
         {
             return preflightResponse;
         }
+        
+        var statuses = input.StatusCodes ?? new List<string> { "IN_TRANSLATION" };
+        if (!statuses.Contains(data.StatusCode))
+        {
+            return preflightResponse;
+        }
 
         var jobDto = await GetJobDto(data.JobId);
         return new WebhookResponse<JobStatusUpdatedResponse>
@@ -81,6 +87,12 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
             HttpResponseMessage = null,
             ReceivedWebhookRequestType = WebhookRequestType.Preflight
         };
+        
+        var statuses = requests.StatusCodes ?? new List<string> { "REVIEW_TRANSLATION" };
+        if (!statuses.Contains(data.StatusCode))
+        {
+            return preflightResponse;
+        }
 
         if (!string.IsNullOrEmpty(requests.JobId) && requests.JobId != data.JobId)
         {
