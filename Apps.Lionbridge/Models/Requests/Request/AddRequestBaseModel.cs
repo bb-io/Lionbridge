@@ -5,10 +5,10 @@ namespace Apps.Lionbridge.Models.Requests.Request;
 public class AddRequestBaseModel
 {
     [Display("Request name")]
-    public string? RequestName { get; set; } = Guid.NewGuid().ToString();
+    public string? RequestName { get; set; }
     
     [Display("Source native ID")]
-    public string? SourceNativeId { get; set; } = Guid.NewGuid().ToString();
+    public string? SourceNativeId { get; set; }
     
     [Display("Source native language")]
     public string SourceNativeLanguageCode { get; set; }

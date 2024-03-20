@@ -51,7 +51,7 @@ public class SupportAssetsActions(InvocationContext invocationContext, IFileMana
             {
                 fmsFileId = uploadResponse.FmsFileId,
                 description = addSupportAssetRequest.Description,
-                sourceNativeIds = addSupportAssetRequest.SourceNativeIds,
+                sourceNativeIds = addSupportAssetRequest.SourceNativeIds ?? new List<string> { Guid.NewGuid().ToString() },
                 sourceNativeLanguageCode = addSupportAssetRequest.SourceNativeLanguageCode,
                 targetNativeLanguageCodes = addSupportAssetRequest.TargetNativeLanguageCodes ?? [fileRequest.TargetNativeLanguage],
                 extendedMetadata = metadata

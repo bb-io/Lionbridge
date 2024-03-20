@@ -40,8 +40,8 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
                     Method.Post)
                 .WithJsonBody(new
                 {
-                    requestName = request.RequestName,
-                    sourceNativeId = request.SourceNativeId,
+                    requestName = request.RequestName ?? Guid.NewGuid().ToString(),
+                    sourceNativeId = request.SourceNativeId ?? Guid.NewGuid().ToString(),
                     sourceNativeLanguageCode = request.SourceNativeLanguageCode,
                     targetNativeIds = request.TargetNativeIds,
                     targetNativeLanguageCodes = new List<string> { request.TargetNativeLanguage },
@@ -67,8 +67,8 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
                     Method.Post)
                 .WithJsonBody(new
                 {
-                    requestName = sourceFileRequest.RequestName,
-                    sourceNativeId = sourceFileRequest.SourceNativeId,
+                    requestName = sourceFileRequest.RequestName ?? Guid.NewGuid().ToString(),
+                    sourceNativeId = sourceFileRequest.SourceNativeId ?? Guid.NewGuid().ToString(),
                     sourceNativeLanguageCode = sourceFileRequest.SourceNativeLanguageCode,
                     targetNativeIds = sourceFileRequest.TargetNativeIds,
                     targetNativeLanguageCodes = new List<string> { sourceFileRequest.TargetNativeLanguage },
