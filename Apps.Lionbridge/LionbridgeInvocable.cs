@@ -56,7 +56,7 @@ public class LionbridgeInvocable : BaseInvocable
         var uploadFileResponse = await client.ExecuteAsync(request);
         if (!uploadFileResponse.IsSuccessful)
         {
-            throw new Exception("Failed to upload file to FMS on second step");
+            throw new Exception("Failed to upload file to FMS on second step of the process");
         }
 
         return response;
