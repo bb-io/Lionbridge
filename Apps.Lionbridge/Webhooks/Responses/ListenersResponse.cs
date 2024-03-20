@@ -7,4 +7,4 @@ public class ListenersResponse : EmbeddedItemsWrapper<ListenersWrapper>
     
 }
 
-public record ListenersWrapper(IEnumerable<ListenerDto> Listeners);
+public record ListenersWrapper(IEnumerable<ListenerDto> listeners);

@@ -12,4 +12,9 @@ public class JobStatusUpdatedHandler : BaseWebhookHandler
     {
         return new[] { "IN_TRANSLATION", "CANCELLED", "SENT_TO_PROVIDER" };
     }
+    
+    protected override string GetEventType()
+    {
+        return "JOB_UPDATE";
+    }
 }

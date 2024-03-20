@@ -57,7 +57,7 @@ public abstract class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
         var response = await Client.ExecuteWithErrorHandling<ListenersResponse>(request);
         
         // Lionbridge api returns eventtype without 'ed' at the end: REQUEST_UPDATED (it will be REQUEST_UPDATE)
-        return response.Embedded.Listeners.FirstOrDefault(x => x.Type.Contains(SubscriptionEvent));
+        return response.Embedded.listeners.FirstOrDefault(x => SubscriptionEvent.Contains(x.Type));
     }
     
     private async Task<ListenerDto> CreateListenerAsync()
@@ -82,4 +82,6 @@ public abstract class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
     }
 
     protected abstract string[] GetStatusCodes();
+    
+    protected abstract string GetEventType();
 }
