@@ -38,14 +38,14 @@ public class RequestDto
     public string SourceNativeLanguageCode { get; set; }
 
     [Display("File name")]
-    public string FileName { get; set; }
+    public string? FileName { get; set; }
 
     [Display("File type")]
-    public string FileType { get; set; }
+    public string? FileType { get; set; }
 
     [Display("File ID")]
-    public string FileId { get; set; }
+    public string? FileId { get; set; }
 
     [Display("Source content ID")]
-    public string SourceContentId { get; set; }
+    public string? SourceContentId { get; set; }
 }

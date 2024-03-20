@@ -8,9 +8,9 @@ public class AddSupportAssetRequest
     public string? Description { get; set; }
 
     [Display("Source native IDs")]
-    public IEnumerable<string> SourceNativeIds { get; set; }
+    public IEnumerable<string>? SourceNativeIds { get; set; } = new List<string> { Guid.NewGuid().ToString() };
     
-    [Display("Source native language code")]
+    [Display("Source native language")]
     public string SourceNativeLanguageCode { get; set; }
     
     [Display("Target native language codes")]

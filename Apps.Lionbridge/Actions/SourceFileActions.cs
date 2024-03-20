@@ -30,7 +30,7 @@ public class SourceFileActions(InvocationContext invocationContext, IFileManagem
         var requestModel = await GetRequest(request.JobId, request.RequestId);
         
         var memoryStream = new MemoryStream(bytes);
-        string fileName = requestModel.FileName;
+        string fileName = requestModel.FileName ?? requestModel.RequestName + ".xml"; // if there is no file name it means that request was created from source content
         string contentType = response.ContentType ?? MimeTypes.GetMimeType(fileName);
         var fileReference = await fileManagementClient.UploadAsync(memoryStream, contentType, fileName);
         
