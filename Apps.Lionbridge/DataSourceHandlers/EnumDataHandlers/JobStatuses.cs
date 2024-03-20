@@ -8,6 +8,7 @@ public class JobStatuses : EnumDataHandler
     {
         { "IN_TRANSLATION", "In translation" },
         { "CANCELLED", "Cancelled" },
-        { "SENT_TO_PROVIDER", "Sent to provider" }
+        { "SENT_TO_PROVIDER", "Sent to provider" },
+        { "Update check", "Update check"}
     };
 }
