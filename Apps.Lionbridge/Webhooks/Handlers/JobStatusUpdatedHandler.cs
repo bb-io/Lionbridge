@@ -7,4 +7,9 @@ public class JobStatusUpdatedHandler : BaseWebhookHandler
     const string SubscriptionEvent = "JOB_STATUS_UPDATED";
 
     public JobStatusUpdatedHandler(InvocationContext invocationContext) : base(invocationContext, SubscriptionEvent) { }
+    
+    protected override string[] GetStatusCodes()
+    {
+        return new[] { "IN_TRANSLATION", "CANCELLED", "SENT_TO_PROVIDER" };
+    }
 }

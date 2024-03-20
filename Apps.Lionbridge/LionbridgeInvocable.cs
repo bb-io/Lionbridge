@@ -105,26 +105,21 @@ public class LionbridgeInvocable : BaseInvocable
         throw new Exception("Job did not complete in time");
     }
     
-    protected async Task<TranslationContentResponse> GetAllTranslationContent(string jobId, string sourceContentId)
-    {
-        string endpoint = $"{ApiEndpoints.Jobs}/{jobId}{ApiEndpoints.TranslationContent}/{sourceContentId}";
-        var apiRequest = new LionbridgeRequest(endpoint);
-
-        var dto = await Client.ExecuteWithErrorHandling<TranslationContentDtoResponse>(apiRequest);
-        return new TranslationContentResponse(dto);
-    }
-    
-    protected async Task<GetRequestsResponse> GetRequests(GetRequestsAsOptional jobRequest)
+    protected async Task<GetRequestsResponse> GetRequests(string jobId, IEnumerable<string>? requestIds)
     {
         RestRequest apiRequest = new LionbridgeRequest(
-            $"{ApiEndpoints.Jobs}/{jobRequest.JobId}" + ApiEndpoints.Requests,
+            $"{ApiEndpoints.Jobs}/{jobId}" + ApiEndpoints.Requests,
             Method.Get);
 
         var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
         var requests = response.Embedded.Requests.ToList();
-        if (jobRequest.RequestIds != null && jobRequest.RequestIds.Any())
+        if (requestIds != null)
         {
-            requests = requests.Where(x => jobRequest.RequestIds.Contains(x.RequestId)).ToList();
+            var requestIdsAsArray = requestIds as string[] ?? requestIds.ToArray();
+            if (requestIdsAsArray.Any())
+            {
+                requests = requests.Where(x => requestIdsAsArray.Contains(x.RequestId)).ToList();
+            }
         }
 
         return new GetRequestsResponse { Requests = requests };

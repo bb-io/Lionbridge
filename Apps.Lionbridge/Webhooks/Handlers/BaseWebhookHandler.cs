@@ -10,7 +10,7 @@ using RestSharp;
 
 namespace Apps.Lionbridge.Webhooks.Handlers;
 
-public class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
+public abstract class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
 {
     private readonly string _bridgeServiceUrl;
     
@@ -56,7 +56,8 @@ public class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
         var request = new LionbridgeRequest(ApiEndpoints.Listeners);
         var response = await Client.ExecuteWithErrorHandling<ListenersResponse>(request);
         
-        return response.Embedded.Listeners.FirstOrDefault(x => x.Type == SubscriptionEvent);
+        // Lionbridge api returns eventtype without 'ed' at the end: REQUEST_UPDATED (it will be REQUEST_UPDATE)
+        return response.Embedded.Listeners.FirstOrDefault(x => x.Type.Contains(SubscriptionEvent));
     }
     
     private async Task<ListenerDto> CreateListenerAsync()
@@ -66,10 +67,7 @@ public class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
             {
                 uri = _bridgeServiceUrl,
                 type = SubscriptionEvent,
-                statusCodes = new []
-                {
-                    "IN_TRANSLATION"
-                },
+                statusCodes = GetStatusCodes(),
                 acknowledgeStatusUpdate = true
             });
         
@@ -82,4 +80,6 @@ public class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
         var request = new LionbridgeRequest($"{ApiEndpoints.Listeners}/{listenerId}", Method.Delete);
         await Client.ExecuteWithErrorHandling(request);
     }
+
+    protected abstract string[] GetStatusCodes();
 }

@@ -24,7 +24,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
     [Action("Get requests", Description = "Get translation requests.")]
     public async Task<GetRequestsResponse> GetRequests([ActionParameter] GetRequestsAsOptional jobRequest)
     {
-        return await GetRequests(jobRequest);
+        return await GetRequests(jobRequest.JobId, jobRequest.RequestIds);
     }
 
     [Action("Create source content request", Description = "Create a new translation request.")]
