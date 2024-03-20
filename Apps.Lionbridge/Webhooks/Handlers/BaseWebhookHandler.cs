@@ -24,8 +24,7 @@ public abstract class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
         _bridgeServiceUrl = $"{invocationContext.UriInfo.BridgeServiceUrl.ToString().TrimEnd('/')}/webhooks/lionbridge";
         Client = new LionbridgeClient(invocationContext.AuthenticationCredentialsProviders);
     }
-
-
+    
     public async Task SubscribeAsync(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders, 
         Dictionary<string, string> values)
     {
@@ -49,7 +48,11 @@ public abstract class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
             var bridge = new BridgeService(authenticationCredentialsProviders, _bridgeServiceUrl);
             string eventType = GetEventType();
             bridge.Unsubscribe(eventType, listener.ListenerId, values["payloadUrl"]);
-            await DeleteListenerAsync(listener.ListenerId);
+            
+            if (!bridge.IsAnySubscriberExist(eventType, listener.ListenerId))
+            {
+                await DeleteListenerAsync(listener.ListenerId);
+            }
         }
     }
     

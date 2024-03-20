@@ -39,4 +39,13 @@ public class BridgeService
         requestDelete.AddHeader("Blackbird-Token", ApplicationConstants.BlackbirdToken);
         client.Delete(requestDelete);
     }
+    
+    public bool IsAnySubscriberExist(string _event, string listenerId)
+    {
+        var client = new RestClient(BridgeServiceUrl);
+        var request = new RestRequest($"/{listenerId}/{_event}", Method.Get);
+        request.AddHeader("Blackbird-Token", ApplicationConstants.BlackbirdToken);
+        var response = client.Get<List<BridgeGetResponse>>(request);
+        return response?.Any() ?? false;
+    }
 }
