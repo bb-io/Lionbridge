@@ -36,7 +36,7 @@ public abstract class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
         }
         
         var bridge = new BridgeService(authenticationCredentialsProviders, _bridgeServiceUrl);
-        bridge.Subscribe(SubscriptionEvent, listener.ListenerId, values["payloadUrl"]);
+        bridge.Subscribe(GetEventType(), listener.ListenerId, values["payloadUrl"]);
     }
 
     public async Task UnsubscribeAsync(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders, 
@@ -46,7 +46,7 @@ public abstract class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
         if (listener != null)
         {
             var bridge = new BridgeService(authenticationCredentialsProviders, _bridgeServiceUrl);
-            bridge.Unsubscribe(SubscriptionEvent, listener.ListenerId, values["payloadUrl"]);
+            bridge.Unsubscribe(GetEventType(), listener.ListenerId, values["payloadUrl"]);
             await DeleteListenerAsync(listener.ListenerId);
         }
     }
