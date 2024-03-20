@@ -36,7 +36,8 @@ public abstract class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
         }
         
         var bridge = new BridgeService(authenticationCredentialsProviders, _bridgeServiceUrl);
-        bridge.Subscribe(GetEventType(), listener.ListenerId, values["payloadUrl"]);
+        string eventType = GetEventType();
+        bridge.Subscribe(eventType, listener.ListenerId, values["payloadUrl"]);
     }
 
     public async Task UnsubscribeAsync(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders, 
@@ -46,7 +47,8 @@ public abstract class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
         if (listener != null)
         {
             var bridge = new BridgeService(authenticationCredentialsProviders, _bridgeServiceUrl);
-            bridge.Unsubscribe(GetEventType(), listener.ListenerId, values["payloadUrl"]);
+            string eventType = GetEventType();
+            bridge.Unsubscribe(eventType, listener.ListenerId, values["payloadUrl"]);
             await DeleteListenerAsync(listener.ListenerId);
         }
     }
@@ -82,6 +84,19 @@ public abstract class BaseWebhookHandler : BaseInvocable, IWebhookEventHandler
     }
 
     protected abstract string[] GetStatusCodes();
-    
-    protected abstract string GetEventType();
+
+    private string GetEventType()
+    {
+        if(SubscriptionEvent.Contains("JOB"))
+        {
+            return "JOB_UPDATE";
+        }
+        
+        if(SubscriptionEvent.Contains("REQUEST"))
+        {
+            return "REQUEST_UPDATE";
+        }
+        
+        throw new Exception("Invalid event type");
+    }
 }

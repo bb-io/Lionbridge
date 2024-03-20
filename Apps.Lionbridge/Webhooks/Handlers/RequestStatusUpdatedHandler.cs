@@ -11,9 +11,4 @@ public class RequestStatusUpdatedHandler : BaseWebhookHandler
     {
         return new[] { "IN_TRANSLATION", "CANCELLED", "REVIEW_TRANSLATION" };
     }
-
-    protected override string GetEventType()
-    {
-        return "REQUEST_UPDATE";
-    }
 }

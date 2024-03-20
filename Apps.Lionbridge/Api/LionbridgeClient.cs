@@ -76,7 +76,7 @@ public class LionbridgeClient : BlackBirdRestClient
         }
         catch (Exception e)
         {
-            return new Exception($"Error was thrown while executing request, response content: {response.Content}; status code: {response.StatusCode}");
+            return new Exception($"Error was thrown while executing request, response content: {response.Content}; status code: {response.StatusCode}; Exception message: {e.Message}");
         }
     }
 
