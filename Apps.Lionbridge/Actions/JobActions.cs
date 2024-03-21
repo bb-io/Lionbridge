@@ -15,7 +15,7 @@ namespace Apps.Lionbridge.Actions;
 [ActionList]
 public class JobActions(InvocationContext invocationContext) : LionbridgeInvocable(invocationContext)
 {
-    [Action("Create job", Description = "Create a new translation job.")]
+    [Action("Create job", Description = "Create a new job")]
     public async Task<JobDto> CreateJob([ActionParameter] CreateJobRequest input)
     {
         var request = new LionbridgeRequest("/jobs", Method.Post)
@@ -31,21 +31,21 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         return await Client.ExecuteWithErrorHandling<JobDto>(request);
     }
 
-    [Action("Delete job", Description = "Delete a translation job.")]
+    [Action("Delete job", Description = "Delete a job")]
     public async Task DeleteJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}", Method.Delete);
         await Client.ExecuteWithErrorHandling(apiRequest);
     }
     
-    [Action("Get job", Description = "Get a translation job.")]
+    [Action("Get job", Description = "Get a job")]
     public async Task<JobDto> GetJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}");
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
     
-    [Action("Update job", Description = "Update a translation job")]
+    [Action("Update job", Description = "Update a job, update only the fields that are specified. To complete a job, set the Job status to 'Completed'. To set a job to 'IN_TRANSLATION', set the Job status to 'In translation'")]
     public async Task<JobDto> UpdateJob([ActionParameter] GetJobRequest jobRequest, [ActionParameter] UpdateJobRequest request)
     {
         var apiUpdateRequest = new UpdateJobApiRequest();
@@ -131,7 +131,7 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
     
-    [Action("Submit job", Description = "Submit a translation job")]
+    [Action("Submit job", Description = "Send a job for translation with a selected provider")]
     public async Task<JobDto> SubmitJob([ActionParameter] GetJobRequest request, [ActionParameter] GetProviderRequest providerRequest)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/submit", Method.Put)
@@ -140,14 +140,14 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
     
-    [Action("Archive job", Description = "Archive a translation job")]
+    [Action("Archive job", Description = "Move a job to storage for safekeeping")]
     public async Task<JobDto> ArchiveJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/archive", Method.Put);
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
     
-    [Action("Unarchive job", Description = "Unarchive a translation job")]
+    [Action("Unarchive job", Description = "Retrieve a job from storage back into active status")]
     public async Task<JobDto> UnarchiveJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/unarchive", Method.Put);

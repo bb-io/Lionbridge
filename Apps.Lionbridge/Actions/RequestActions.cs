@@ -21,7 +21,7 @@ namespace Apps.Lionbridge.Actions;
 public class RequestActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : LionbridgeInvocable(invocationContext)
 {
-    [Action("Get requests", Description = "Get translation requests.")]
+    [Action("Get requests", Description = "View a list of your translation requests")]
     public async Task<GetRequestsResponse> GetRequests([ActionParameter] GetRequestsAsOptional jobRequest)
     {
         return await GetRequests(jobRequest.JobId, jobRequest.RequestIds);
@@ -54,7 +54,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
         return response.Embedded.Requests.First();
     }
 
-    [Action("Create file request", Description = "Create a new translation request.")]
+    [Action("Create file request", Description = "Start a new request to translate a document")]
     public async Task<RequestDto> CreateFileRequest([ActionParameter] GetJobRequest jobRequest,
         [ActionParameter] AddSourceFileRequest sourceFileRequest)
     {
@@ -81,13 +81,13 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
         return response.Embedded.Requests.First();
     }
 
-    [Action("Get request", Description = "Get a translation request.")]
+    [Action("Get request", Description = "View details of a specific translation request")]
     public async Task<RequestDto> GetRequest([ActionParameter] GetRequest request)
     {
         return await GetRequest(request.JobId, request.RequestId);
     }
 
-    [Action("Delete request", Description = "Delete a translation request.")]
+    [Action("Delete request", Description = "Remove a translation request no longer needed")]
     public async Task<RequestDto> DeleteRequest([ActionParameter] GetRequest request)
     {
         var apiRequest =
@@ -97,7 +97,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
         return await Client.ExecuteWithErrorHandling<RequestDto>(apiRequest);
     }
 
-    [Action("Approve request", Description = "Approve a translation request")]
+    [Action("Approve request", Description = "Approve a request to send it to the provider")]
     public async Task ApproveRequest([ActionParameter] GetRequests request)
     {
         var apiRequest =
@@ -125,7 +125,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
         await Client.ExecuteWithErrorHandling(apiRequest);
     }
 
-    [Action("Update request content", Description = "Update a translation request content")]
+    [Action("Update request content", Description = "Make changes to the details of an existing translation request.")]
     public async Task<RequestDto> UpdateRequestContent([ActionParameter] GetRequest request,
         [ActionParameter] UpdateRequestModel updateRequestContentModel)
     {

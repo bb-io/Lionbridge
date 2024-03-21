@@ -16,7 +16,7 @@ namespace Apps.Lionbridge.Actions;
 public class TranslationContentActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : LionbridgeInvocable(invocationContext)
 {
-    [Action("Get translation content", Description = "Get translation source content for a job")]
+    [Action("Get translation content", Description = "Access the original content submitted for translation in a job")]
     public async Task<TranslationContentResponse> GetAllTranslationContent([ActionParameter] GetJobRequest request,
         [ActionParameter, Display("Source content ID")] string sourceContentId)
     {
@@ -27,7 +27,7 @@ public class TranslationContentActions(InvocationContext invocationContext, IFil
         return new TranslationContentResponse(dto);
     }
     
-    [Action("Update translation content", Description = "Replace source content in a job.")]
+    [Action("Update translation content", Description = "Update the original content submitted for translation")]
     public async Task<TranslationContentResponse> UpdateTranslationContent([ActionParameter] GetJobRequest request,
         [ActionParameter, Display("Source content ID")] string sourceContentId,
         [ActionParameter] UpdateTranslationContentRequest updateTranslationContentRequest)
@@ -45,7 +45,7 @@ public class TranslationContentActions(InvocationContext invocationContext, IFil
         return new TranslationContentResponse(dto);
     }
     
-    [Action("Retrieve source content", Description = "Retrieve the target content for translation request(s).")]
+    [Action("Retrieve source content", Description = "Download the translated content for one or more translation requests")]
     public async Task<RetrieveTranslationContentForRequestResponse> RetrieveTranslationContent([ActionParameter] GetRequest request)
     {
         string endpoint = $"{ApiEndpoints.Jobs}/{request.JobId}{ApiEndpoints.Requests}/{request.RequestId}{ApiEndpoints.Retrieve}";

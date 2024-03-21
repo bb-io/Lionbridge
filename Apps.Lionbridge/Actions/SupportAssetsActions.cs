@@ -18,7 +18,7 @@ namespace Apps.Lionbridge.Actions;
 public class SupportAssetsActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : LionbridgeInvocable(invocationContext)
 {
-    [Action("Get support asset", Description = "Get a support asset.")]
+    [Action("Get support asset", Description = "Retrieve details about a specific support asset linked to a job")]
     public async Task<SupportAssetResponse> GetSupportAsset([ActionParameter] GetSupportAssetRequest request)
     {
         string endpoint = $"{ApiEndpoints.Jobs}/{request.LionBridgeJobId}{ApiEndpoints.SupportAssets}/{request.SupportAssetId}";
@@ -28,7 +28,7 @@ public class SupportAssetsActions(InvocationContext invocationContext, IFileMana
         return new SupportAssetResponse(dto);
     }
 
-    [Action("Delete support asset", Description = "Delete a support asset.")]
+    [Action("Delete support asset", Description = "Remove a support asset from a job")]
     public async Task DeleteSupportAsset([ActionParameter] GetSupportAssetRequest request)
     {
         string endpoint = $"{ApiEndpoints.Jobs}/{request.LionBridgeJobId}{ApiEndpoints.SupportAssets}/{request.SupportAssetId}";
@@ -37,7 +37,7 @@ public class SupportAssetsActions(InvocationContext invocationContext, IFileMana
         await Client.ExecuteWithErrorHandling(apiRequest);
     }
 
-    [Action("Add support asset", Description = "Add a support asset to a job")]
+    [Action("Add support asset", Description = "Attach a new support asset to job")]
     public async Task<SupportAssetResponse> AddSupportAsset([ActionParameter] GetJobRequest request,
         [ActionParameter] AddSupportAssetRequest addSupportAssetRequest,
         [ActionParameter] AddFileRequest fileRequest)

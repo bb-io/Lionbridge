@@ -13,7 +13,7 @@ namespace Apps.Lionbridge.Actions;
 public class SourceFileActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : LionbridgeInvocable(invocationContext)
 {
-    [Action("Retrieve file", Description = "Retrieve a file from specific request")]
+    [Action("Retrieve file", Description = "Download a document from a specific request")]
     public async Task<RetrieveFileResponse> RetrieveFile([ActionParameter] GetRequest request)
     {
         string endpoint = $"{ApiEndpoints.Jobs}/{request.JobId}{ApiEndpoints.Requests}/{request.RequestId}{ApiEndpoints.RetrieveFile}";

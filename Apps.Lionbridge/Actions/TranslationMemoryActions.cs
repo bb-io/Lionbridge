@@ -18,7 +18,7 @@ namespace Apps.Lionbridge.Actions;
 public class TranslationMemoryActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : LionbridgeInvocable(invocationContext)
 {
-    [Action("Add translation memory", Description = "Add a translation memory to a job")]
+    [Action("Add translation memory", Description = "Incorporate a translation memory file into a job")]
     public async Task<TranslationMemoryResponse> AddTranslationMemory([ActionParameter] GetJobRequest request,
         [ActionParameter] AddTranslationMemoryRequest addTranslationMemoryRequest,
         [ActionParameter] AddFileRequest fileRequest)
@@ -40,7 +40,7 @@ public class TranslationMemoryActions(InvocationContext invocationContext, IFile
         return new TranslationMemoryResponse(dto);
     }
 
-    [Action("Get translation memory", Description = "Get a translation memory.")]
+    [Action("Get translation memory", Description = "Retrieve details of a specific translation memory associated with a job")]
     public async Task<TranslationMemoryResponse> GetTranslationMemory(
         [ActionParameter] GetTranslationMemoryRequest request)
     {
