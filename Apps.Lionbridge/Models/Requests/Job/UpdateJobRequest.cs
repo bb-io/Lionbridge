@@ -1,4 +1,5 @@
 ﻿using Apps.Lionbridge.DataSourceHandlers;
+using Apps.Lionbridge.DataSourceHandlers.EnumDataHandlers;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Dynamic;
 
@@ -41,4 +42,7 @@ public class UpdateJobRequest
     [Display("Label values", Description = "Label values. For each specified value, a respective key should be added " +
                                           "in the 'Label keys' input parameter.")]
     public IEnumerable<string>? LabelValues { get; set; }
+    
+    [Display("Job status"), DataSource(typeof(JobCompletionStatuses))]
+    public string? JobCompletionStatus { get; set; }
 }
