@@ -1,0 +1,136 @@
+﻿using Apps.Lionbridge.Api;
+using Apps.Lionbridge.Constants;
+using Apps.Lionbridge.Models.Dtos;
+using Apps.Lionbridge.Webhooks.Handlers;
+using Apps.Lionbridge.Webhooks.Inputs;
+using Apps.Lionbridge.Webhooks.Payload;
+using Apps.Lionbridge.Webhooks.Responses;
+using Blackbird.Applications.Sdk.Common.Invocation;
+using Blackbird.Applications.Sdk.Common.Webhooks;
+using Newtonsoft.Json;
+
+namespace Apps.Lionbridge.Webhooks;
+
+[WebhookList]
+public class WebhookList(InvocationContext invocationContext) : LionbridgeInvocable(invocationContext)
+{
+    #region Job Webhooks
+
+    [Webhook("Job status updated", typeof(JobStatusUpdatedHandler),
+        Description = "Check for updates on jobs, as you are directly informed when the job is finished or cancelled")]
+    public async Task<WebhookResponse<JobStatusUpdatedResponse>> OnJobStatusUpdated(WebhookRequest webhookRequest,
+        [WebhookParameter] JobStatusUpdatedInput input)
+    {
+        var data = JsonConvert.DeserializeObject<JobStatusUpdatedPayload>(webhookRequest.Body.ToString());
+        if (data is null)
+            throw new InvalidCastException(nameof(webhookRequest.Body));
+
+        var preflightResponse = new WebhookResponse<JobStatusUpdatedResponse>
+        {
+            HttpResponseMessage = null,
+            ReceivedWebhookRequestType = WebhookRequestType.Preflight
+        };
+
+        if (!string.IsNullOrEmpty(input.JobId) && input.JobId != data.JobId)
+        {
+            return preflightResponse;
+        }
+
+        bool archived = input.Archived ?? false;
+        if (archived != data.Archived)
+        {
+            return preflightResponse;
+        }
+
+        bool deleted = input.Deleted ?? false;
+        if (deleted != data.Deleted)
+        {
+            return preflightResponse;
+        }
+        
+        var statuses = input.StatusCodes ?? new List<string> { "IN_TRANSLATION" };
+        if (!statuses.Contains(data.StatusCode))
+        {
+            return preflightResponse;
+        }
+
+        var jobDto = await GetJobDto(data.JobId);
+        return new WebhookResponse<JobStatusUpdatedResponse>
+        {
+            HttpResponseMessage = null,
+            ReceivedWebhookRequestType = WebhookRequestType.Default,
+            Result = new JobStatusUpdatedResponse
+            {
+                Job = jobDto,
+                Deleted = data.Deleted,
+                Archived = data.Archived
+            }
+        };
+    }
+
+    #endregion
+
+    #region Request Webhooks
+
+    [Webhook("On request status updated", typeof(RequestStatusUpdatedHandler),
+        Description =
+            "Check for updates on requests, as you are directly informed when the request is finished or cancelled")]
+    public async Task<WebhookResponse<RequestStatusUpdatedResponse>> OnRequestStatusUpdated(
+        WebhookRequest webhookRequest, [WebhookParameter] GetRequestsInput requests)
+    {
+        var data = JsonConvert.DeserializeObject<RequestStatusUpdatedPayload>(webhookRequest.Body.ToString());
+        if (data is null)
+            throw new InvalidCastException(nameof(webhookRequest.Body));
+
+        var preflightResponse = new WebhookResponse<RequestStatusUpdatedResponse>
+        {
+            HttpResponseMessage = null,
+            ReceivedWebhookRequestType = WebhookRequestType.Preflight
+        };
+        
+        var statuses = requests.StatusCodes ?? new List<string> { "REVIEW_TRANSLATION" };
+        if (!statuses.Contains(data.StatusCode))
+        {
+            return preflightResponse;
+        }
+
+        if (!string.IsNullOrEmpty(requests.JobId) && requests.JobId != data.JobId)
+        {
+            return preflightResponse;
+        }
+
+        var jobDto = await GetJobDto(data.JobId);
+        var requestDtos = await GetRequests(data.JobId, data.RequestIds);
+        return new WebhookResponse<RequestStatusUpdatedResponse>
+        {
+            HttpResponseMessage = null,
+            ReceivedWebhookRequestType = WebhookRequestType.Default,
+            Result = new RequestStatusUpdatedResponse
+            {
+                Job = jobDto,
+                Requests = requestDtos,
+            }
+        };
+    }
+
+    #endregion
+
+    private async Task<JobDto> GetJobDto(string jobId)
+    {
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobId}");
+        return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
+    }
+
+    private async Task<List<RequestDto>> GetRequests(string jobId, IEnumerable<string> requestIds)
+    {
+        var requests = new List<RequestDto>();
+
+        foreach (var requestId in requestIds)
+        {
+            var request = await GetRequest(jobId, requestId);
+            requests.Add(request);
+        }
+
+        return requests;
+    }
+}

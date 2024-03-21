@@ -1,4 +1,5 @@
-﻿using Apps.Lionbridge.Constants;
+﻿using System.Net;
+using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
 using Blackbird.Applications.Sdk.Common.Authentication;
@@ -22,20 +23,61 @@ public class LionbridgeClient : BlackBirdRestClient
         this.AddDefaultHeader("Authorization", $"Bearer {accessToken}"); 
     }
 
+    public override async Task<RestResponse> ExecuteWithErrorHandling(RestRequest request)
+    {
+        var response = await ExecuteAsync(request);
+
+        if (response.StatusCode == HttpStatusCode.TooManyRequests ||
+            response.StatusCode == HttpStatusCode.ServiceUnavailable)
+        {
+            const int scalingFactor = 2;
+            var retryAfterMilliseconds = 1000;
+
+            for (int i = 0; i < 5; i++)
+            {
+                await Task.Delay(retryAfterMilliseconds);
+                response = await ExecuteAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                    break;
+
+                retryAfterMilliseconds *= scalingFactor;
+            }
+        }
+
+        if (!response.IsSuccessStatusCode)
+            throw ConfigureErrorException(response);
+
+        return response;
+    }
+    
+    public override async Task<T> ExecuteWithErrorHandling<T>(RestRequest request)
+    {
+        var response = await ExecuteWithErrorHandling(request);
+        return JsonConvert.DeserializeObject<T>(response.Content, JsonSettings);
+    }
+
     protected override Exception ConfigureErrorException(RestResponse response) 
     {
-        if (string.IsNullOrWhiteSpace(response.Content))
-            return new(response.StatusCode.ToString());
+        try
+        {
+            if (string.IsNullOrWhiteSpace(response.Content))
+                return new(response.StatusCode.ToString());
         
-        if (!response.Content.IsJson())
+            if (!response.Content.IsJson())
+                return new(response.Content);
+        
+            var error = JsonConvert.DeserializeObject<ErrorDto>(response.Content, JsonSettings);
+
+            if (error != null)
+                return new(error.Message);
+
             return new(response.Content);
-        
-        var error = JsonConvert.DeserializeObject<ErrorDto>(response.Content, JsonSettings);
-
-        if (error != null)
-            return new(error.Message);
-
-        return new(response.Content);
+        }
+        catch (Exception e)
+        {
+            return new Exception($"Error was thrown while executing request, response content: {response.Content}; status code: {response.StatusCode}; Exception message: {e.Message}");
+        }
     }
 
     private string GetAccessToken(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders)
