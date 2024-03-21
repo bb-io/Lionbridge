@@ -45,7 +45,7 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
     
-    [Action("Update job", Description = "Update a job, update only the fields that are specified. To complete a job, set the Job status to 'Completed'. To set a job to 'IN_TRANSLATION', set the Job status to 'In translation'")]
+    [Action("Update job", Description = "Update a job, update only the fields that are specified. To complete a job, set the Job status to 'Completed'. To set a job to 'In translation', set the Job status to 'In translation'")]
     public async Task<JobDto> UpdateJob([ActionParameter] GetJobRequest jobRequest, [ActionParameter] UpdateJobRequest request)
     {
         var apiUpdateRequest = new UpdateJobApiRequest();

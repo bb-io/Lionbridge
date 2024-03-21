@@ -93,6 +93,18 @@ Before you can connect you need to make sure that:
 
 - **On request status updated**: Similar to job status updates, this webhook alerts you when a translation request reaches a certain milestone, like finishing or being cancelled. By default, it is set to activate for requests that are in the "REVIEW_TRANSLATION" status unless otherwise specified. The webhook evaluates the request's compliance with the predefined conditions, such as status codes, job ID relevance, and whether the request IDs match the expected values. Successful validation results in a detailed report on the job and the affected requests, ensuring you're always up-to-date on your translation projects' progress.
 
+## Example
+
+The first bird initiates a job and creates requests based on files that have been uploaded to Google Drive, and then sends it to the Lionbridge provider using the 'Submit Job' action.
+
+![Lionbridge-example-1](image/README/Lionbridge-example-1.png)
+
+The second bird activates when the provider has processed our file (or files), after which we upload it back to cloud storage (Google Drive in this example). Finally, we simply archive the job.
+
+![Lionbridge-example-2](image/README/Lionbridge-example-2.png)
+
+These birds demonstrate the common workflow in the Lionbridge app.
+
 ## Feedback
 
 Do you want to use this app or do you have feedback on our implementation? Reach out to us using the [established channels](https://www.blackbird.io/) or create an issue.
