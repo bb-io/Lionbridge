@@ -6,7 +6,7 @@ Blackbird is the new automation backbone for the language technology industry. B
 
 <!-- begin docs -->
 
-Lionbridge is the translation and localization expert. Advanced automation tools are indispensable to simplify your content journey and effectively reach your customers faster and more cost-efficiently than ever before.
+Lionbridge Technologies, Inc is an American company that provides translation and localization services. The Lionbridge Content API is an open API that supports all translation quality levels and a broad range of content types. Lionbridge clients can leverage this app for all their translation needs. The Lionbridge Content API can be integrated with 100+ apps on Blackbird, including Amazon S3, Contentful, Contentstack, Customer.io, Github, HubSpot, Adobe Marketo, Microsoft Sharepoint, Notion, Salesforce, Shopify, Sitecore, Storyblok, Wordpress and Zendesk.
 
 ## Before setting up
 
