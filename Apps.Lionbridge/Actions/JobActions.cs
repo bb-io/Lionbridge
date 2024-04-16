@@ -37,132 +37,106 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}", Method.Delete);
         await Client.ExecuteWithErrorHandling(apiRequest);
     }
-    
+
     [Action("Get job", Description = "Get a job")]
     public async Task<JobDto> GetJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}");
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
-    
-    [Action("Update job", Description = "Update a job, update only the fields that are specified. To complete a job, set the Job status to 'Completed'. To set a job to 'In translation', set the Job status to 'In translation'")]
-    public async Task<JobDto> UpdateJob([ActionParameter] GetJobRequest jobRequest, [ActionParameter] UpdateJobRequest request)
+
+    [Action("Update job",
+        Description =
+            "Update a job, update only the fields that are specified. To complete a job, set the Job status to 'Completed'. To set a job to 'In translation', set the Job status to 'In translation'")]
+    public async Task<JobDto> UpdateJob([ActionParameter] GetJobRequest jobRequest,
+        [ActionParameter] UpdateJobRequest request)
     {
-        var apiUpdateRequest = new UpdateJobApiRequest();
-        
-        if(request.JobName != null)
+        var changed = HasJobChanged(request);
+
+        JobDto? job = null;
+        if (changed)
         {
-            apiUpdateRequest.JobName = request.JobName;
-        }
-        
-        if(request.Description != null)
-        {
-            apiUpdateRequest.Description = request.Description;
-        }
-        
-        if(request.ProviderId != null)
-        {
-            apiUpdateRequest.ProviderId = request.ProviderId;
-        }
-        
-        if(request.MetadataKeys != null && request.MetadataValues != null)
-        {
-            apiUpdateRequest.ExtendedMetadata = EnumerableExtensions.ToDictionary(request.MetadataKeys, request.MetadataValues);
-        }
-        
-        if(request.LabelKeys != null && request.LabelValues != null)
-        {
-            apiUpdateRequest.Labels = EnumerableExtensions.ToDictionary(request.LabelKeys, request.LabelValues);
-        }
-        
-        if(request.DueDate != null)
-        {
-            apiUpdateRequest.DueDate = request.DueDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ");
-        }
-        
-        if(request.ShouldQuote != null)
-        {
-            apiUpdateRequest.ShouldQuote = request.ShouldQuote;
-        }
-        
-        if(request.ConnectorName != null)
-        {
-            apiUpdateRequest.ConnectorName = request.ConnectorName;
-        }
-        
-        if(request.ConnectorVersion != null)
-        {
-            apiUpdateRequest.ConnectorVersion = request.ConnectorVersion;
-        }
-        
-        if(request.ServiceType != null)
-        {
-            apiUpdateRequest.ServiceType = request.ServiceType;
-        }
-        
-        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}", Method.Patch)
-            .WithJsonBody(new
-            {
-                jobName = apiUpdateRequest.JobName,
-                description = apiUpdateRequest.Description,
-                providerId = apiUpdateRequest.ProviderId,
-                extendedMetadata = apiUpdateRequest.ExtendedMetadata,
-                labels = apiUpdateRequest.Labels,
-                dueDate = apiUpdateRequest.DueDate,
-                shouldQuote = apiUpdateRequest.ShouldQuote,
-                connectorName = apiUpdateRequest.ConnectorName,
-                connectorVersion = apiUpdateRequest.ConnectorVersion,
-                serviceType = apiUpdateRequest.ServiceType
-            });
-        
-        if(request.JobCompletionStatus != null)
-        {
-            if(request.JobCompletionStatus == "COMPLETED")
-            {
-                return await CompleteJob(jobRequest.JobId);
-            }
+            var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobRequest.JobId}", Method.Patch)
+                .WithJsonBody(new
+                {
+                    jobName = request.JobName,
+                    description = request.Description,
+                    providerId = request.ProviderId,
+                    extendedMetadata = EnumerableExtensions.ToDictionary(request.MetadataKeys, request.MetadataValues),
+                    labels = EnumerableExtensions.ToDictionary(request.LabelKeys, request.LabelValues),
+                    dueDate = request.DueDate,
+                    shouldQuote = request.ShouldQuote,
+                    connectorName = request.ConnectorName,
+                    connectorVersion = request.ConnectorVersion,
+                    serviceType = request.ServiceType
+                });
             
-            if(request.JobCompletionStatus == "IN_TRANSLATION")
-            {
-                return await IntranslateJob(jobRequest.JobId);
-            }
+            job = await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
         }
 
-        return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
+        if (request.JobCompletionStatus != null)
+        {
+            job = await UpdateJobCompletionStatus(jobRequest.JobId, request.JobCompletionStatus, job);
+        }
+
+        return job ?? await GetJob(jobRequest);
     }
-    
+
     [Action("Submit job", Description = "Send a job for translation with a selected provider")]
-    public async Task<JobDto> SubmitJob([ActionParameter] GetJobRequest request, [ActionParameter] GetProviderRequest providerRequest)
+    public async Task<JobDto> SubmitJob([ActionParameter] GetJobRequest request,
+        [ActionParameter] GetProviderRequest providerRequest)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/submit", Method.Put)
             .WithJsonBody(new { providerId = providerRequest.ProviderId });
-        
+
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
-    
+
     [Action("Archive job", Description = "Move a job to storage for safekeeping")]
     public async Task<JobDto> ArchiveJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/archive", Method.Put);
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
-    
+
     [Action("Unarchive job", Description = "Retrieve a job from storage back into active status")]
     public async Task<JobDto> UnarchiveJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/unarchive", Method.Put);
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
-    
-    protected async Task<JobDto> CompleteJob(string jobId)
+
+    private async Task<JobDto> CompleteJob(string jobId)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobId}/complete", Method.Put);
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
-    
-    protected async Task<JobDto> IntranslateJob(string jobId)
+
+    private async Task<JobDto> IntranslateJob(string jobId)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobId}/intranslation", Method.Put);
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
+    }
+    
+    private bool HasJobChanged(UpdateJobRequest request)
+    {
+        return request.JobName != null || request.Description != null || request.ProviderId != null ||
+               (request.MetadataKeys != null && request.MetadataValues != null) ||
+               (request.LabelKeys != null && request.LabelValues != null) || request.DueDate != null ||
+               request.ShouldQuote != null || request.ConnectorName != null ||
+               request.ConnectorVersion != null || request.ServiceType != null;
+    }
+    
+    private async Task<JobDto?> UpdateJobCompletionStatus(string jobId, string status, JobDto? currentJob)
+    {
+        switch (status)
+        {
+            case "COMPLETED":
+                return await CompleteJob(jobId);
+            case "IN_TRANSLATION":
+                return await IntranslateJob(jobId);
+            default:
+                return currentJob;
+        }
     }
 }

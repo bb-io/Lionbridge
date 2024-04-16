@@ -60,6 +60,9 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
     {
         var uploadResponse = await UploadFmsFile(jobRequest.JobId, new AddFileRequest(sourceFileRequest), fileManagementClient);
 
+        string fileName = sourceFileRequest.FileName ?? sourceFileRequest.File.Name;
+        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+
         var metadata =
             EnumerableExtensions.ToDictionary(sourceFileRequest.MetadataKeys, sourceFileRequest.MetadataValues);
         var apiRequest =
@@ -67,7 +70,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
                     Method.Post)
                 .WithJsonBody(new
                 {
-                    requestName = sourceFileRequest.RequestName ?? Guid.NewGuid().ToString(),
+                    requestName = sourceFileRequest.RequestName ?? fileNameWithoutExtension,
                     sourceNativeId = sourceFileRequest.SourceNativeId ?? Guid.NewGuid().ToString(),
                     sourceNativeLanguageCode = sourceFileRequest.SourceNativeLanguageCode,
                     targetNativeIds = sourceFileRequest.TargetNativeIds,
