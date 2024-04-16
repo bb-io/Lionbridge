@@ -17,7 +17,7 @@ Before you can connect you need to make sure that:
 
 ## Connecting 
 
-1. Navigate to apps and search for Contentstack. If you cannot find Contentstack, then click _Add App_ in the top right corner, select Contentstack, and add the app to your Blackbird environment.
+1. Navigate to apps and search for Lionbridge. If you cannot find Lionbridge, then click _Add App_ in the top right corner, select Lionbridge, and add the app to your Blackbird environment.
 2. Click _Add Connection_.
 3. Name your connection for future reference, e.g., 'My client'.
 4. In the _API Key_ field, input your API Key
