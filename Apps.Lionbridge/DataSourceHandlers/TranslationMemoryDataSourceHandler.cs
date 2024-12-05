@@ -8,7 +8,7 @@ using Blackbird.Applications.Sdk.Common.Invocation;
 
 namespace Apps.Lionbridge.DataSourceHandlers;
 
-public class TranslationMemoryDataSourceHandler : LionbridgeInvocable, IAsyncDataSourceHandler
+public class TranslationMemoryDataSourceHandler : LionbridgeInvocable, IAsyncDataSourceItemHandler
 {
     private readonly string _jobId;
 
@@ -18,7 +18,7 @@ public class TranslationMemoryDataSourceHandler : LionbridgeInvocable, IAsyncDat
         _jobId = request.LionBridgeJobId;
     }
 
-    public async Task<Dictionary<string, string>> GetDataAsync(DataSourceContext context,
+    public async Task<IEnumerable<DataSourceItem>> GetDataAsync(DataSourceContext context,
         CancellationToken cancellationToken)
     {
         if(string.IsNullOrEmpty(_jobId))
@@ -34,6 +34,6 @@ public class TranslationMemoryDataSourceHandler : LionbridgeInvocable, IAsyncDat
         return response.Embedded.tmupdates.Where(job =>
                 context.SearchString == null ||
                 job.FileName.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
-            .ToDictionary(job => job.TmupdateId, job => job.FileName);
+            .Select(job => new DataSourceItem(job.TmupdateId, job.FileName));
     }
 }

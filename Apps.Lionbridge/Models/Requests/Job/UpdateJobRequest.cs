@@ -1,6 +1,7 @@
 ﻿using Apps.Lionbridge.DataSourceHandlers;
 using Apps.Lionbridge.DataSourceHandlers.EnumDataHandlers;
 using Blackbird.Applications.Sdk.Common;
+using Blackbird.Applications.Sdk.Common.Dictionaries;
 using Blackbird.Applications.Sdk.Common.Dynamic;
 
 namespace Apps.Lionbridge.Models.Requests.Job;
@@ -43,6 +44,6 @@ public class UpdateJobRequest
                                           "in the 'Label keys' input parameter.")]
     public IEnumerable<string>? LabelValues { get; set; }
     
-    [Display("Job status"), DataSource(typeof(JobCompletionStatuses))]
-    public string? JobCompletionStatus { get; set; }
+    //[Display("Job status"), StaticDataSource(typeof(JobStatusDataHandler))]
+    //public string? JobCompletionStatus { get; set; }
 }

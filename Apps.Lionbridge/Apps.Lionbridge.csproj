@@ -5,20 +5,19 @@
 		<Nullable>enable</Nullable>
 		<Product>Lionbridge</Product>
 		<Description>Lionbridge is the translation and localization expert. Advanced automation tools are indispensable to simplify your content journey and effectively reach your customers faster and more cost-efficiently than ever before</Description>
-		<Version>1.0.1</Version>
+		<Version>1.0.2</Version>
 		<AssemblyName>Apps.Lionbridge</AssemblyName>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.6.0"/>
-		<PackageReference Include="Blackbird.Applications.Sdk.Utils" Version="1.0.25"/>
+		<PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.11.0" />
+		<PackageReference Include="Blackbird.Applications.Sdk.Utils" Version="1.0.25" />
 		<PackageReference Include="MimeTypes" Version="2.4.1">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-		<PackageReference Include="RestSharp" Version="110.2.0"/>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 	<ItemGroup>
-		<EmbeddedResource Include="image\icon.png" CopyToOutputDirectory="Always"/>
+		<EmbeddedResource Include="image\icon.png" CopyToOutputDirectory="Always" />
 	</ItemGroup>
 </Project>

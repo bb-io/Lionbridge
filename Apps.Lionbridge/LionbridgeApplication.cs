@@ -10,12 +10,6 @@ public class LionbridgeApplication : IApplication, ICategoryProvider
         get => [ApplicationCategory.LspPortal];
         set { }
     }
-    
-    public string Name
-    {
-        get => "Lionbridge";
-        set { }
-    }
 
     public T GetInstance<T>() => throw new NotImplementedException();
 }
