@@ -12,7 +12,6 @@ public class ConnectionDefinition : IConnectionDefinition
         {
             Name = "Lionbridge connection",
             AuthenticationType = ConnectionAuthenticationType.Undefined,
-            ConnectionUsage = ConnectionUsage.Actions,
             ConnectionProperties = new List<ConnectionProperty>
             {
                 new(CredNames.ClientId) { DisplayName = "Client ID" },
@@ -24,6 +23,6 @@ public class ConnectionDefinition : IConnectionDefinition
     public IEnumerable<AuthenticationCredentialsProvider> CreateAuthorizationCredentialsProviders(
         Dictionary<string, string> values)
         => values.Select(x =>
-                new AuthenticationCredentialsProvider(AuthenticationCredentialsRequestLocation.None, x.Key, x.Value))
+                new AuthenticationCredentialsProvider(x.Key, x.Value))
             .ToList();
 }

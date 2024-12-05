@@ -7,9 +7,9 @@ using Blackbird.Applications.Sdk.Common.Invocation;
 namespace Apps.Lionbridge.DataSourceHandlers;
 
 public class ProviderDataSourceHandler(InvocationContext invocationContext)
-    : LionbridgeInvocable(invocationContext), IAsyncDataSourceHandler
+    : LionbridgeInvocable(invocationContext), IAsyncDataSourceItemHandler
 {
-    public async Task<Dictionary<string, string>> GetDataAsync(DataSourceContext context, 
+    public async Task<IEnumerable<DataSourceItem>> GetDataAsync(DataSourceContext context, 
         CancellationToken cancellationToken)
     {
         var endpoint = "/providers?includeDeletedOnes=false";
@@ -29,6 +29,6 @@ public class ProviderDataSourceHandler(InvocationContext invocationContext)
             endpoint = $"/providers?includeDeletedOnes=false&next={nextToken}";
         } while (nextToken != null);
 
-        return providers.ToDictionary(provider => provider.ProviderId, provider => provider.ProviderName);
+        return providers.Select(provider => new DataSourceItem(provider.ProviderId, provider.ProviderName));
     }
 }

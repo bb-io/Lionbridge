@@ -74,11 +74,10 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
             job = await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
         }
 
-        if (request.JobCompletionStatus != null)
-        {
-            job = await UpdateJobCompletionStatus(jobRequest.JobId, request.JobCompletionStatus, job);
-        }
-
+        //if (request.JobCompletionStatus != null)
+        //{
+        //    job = await UpdateJobCompletionStatus(jobRequest.JobId, request.JobCompletionStatus, job);
+        //}
         return job ?? await GetJob(jobRequest);
     }
 

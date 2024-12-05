@@ -10,7 +10,7 @@ using Blackbird.Applications.Sdk.Common.Invocation;
 
 namespace Apps.Lionbridge.DataSourceHandlers;
 
-public class RequestDataSourceHandler : LionbridgeInvocable, IAsyncDataSourceHandler
+public class RequestDataSourceHandler : LionbridgeInvocable, IAsyncDataSourceItemHandler
 {
     private readonly string? _jobId;
 
@@ -20,7 +20,7 @@ public class RequestDataSourceHandler : LionbridgeInvocable, IAsyncDataSourceHan
         _jobId = request.JobId;
     }
 
-    public async Task<Dictionary<string, string>> GetDataAsync(DataSourceContext context,
+    public async Task<IEnumerable<DataSourceItem>> GetDataAsync(DataSourceContext context,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(_jobId))
@@ -35,7 +35,7 @@ public class RequestDataSourceHandler : LionbridgeInvocable, IAsyncDataSourceHan
         return response.Embedded.Requests.Where(job =>
                 context.SearchString == null ||
                 job.RequestName.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
-            .ToDictionary(job => job.RequestId, BuildReadableName);
+            .Select(job => new DataSourceItem(job.RequestId, BuildReadableName(job)));
     }
 
     private string BuildReadableName(RequestDto requestDto)

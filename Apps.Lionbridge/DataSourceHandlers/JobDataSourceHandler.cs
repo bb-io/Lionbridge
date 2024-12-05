@@ -7,9 +7,9 @@ using Blackbird.Applications.Sdk.Common.Invocation;
 namespace Apps.Lionbridge.DataSourceHandlers;
 
 public class JobDataSourceHandler(InvocationContext invocationContext)
-    : LionbridgeInvocable(invocationContext), IAsyncDataSourceHandler
+    : LionbridgeInvocable(invocationContext), IAsyncDataSourceItemHandler
 {
-    public async Task<Dictionary<string, string>> GetDataAsync(DataSourceContext context, 
+    public async Task<IEnumerable<DataSourceItem>> GetDataAsync(DataSourceContext context, 
         CancellationToken cancellationToken)
     {
         var endpoint = ApiEndpoints.Jobs;
@@ -19,6 +19,6 @@ public class JobDataSourceHandler(InvocationContext invocationContext)
         return response.Embedded.Jobs.Where(job =>
             context.SearchString == null ||
             job.JobName.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
-            .ToDictionary(job => job.JobId, job => job.JobName);
+            .Select(job => new DataSourceItem(job.JobId, job.JobName));
     }
 }
