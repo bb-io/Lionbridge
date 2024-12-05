@@ -78,7 +78,6 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         //{
         //    job = await UpdateJobCompletionStatus(jobRequest.JobId, request.JobCompletionStatus, job);
         //}
-
         return job ?? await GetJob(jobRequest);
     }
 
