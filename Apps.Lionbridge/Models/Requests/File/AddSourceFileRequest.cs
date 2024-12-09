@@ -12,5 +12,5 @@ public class AddSourceFileRequest : AddRequestBaseModel
     public string? FileName { get; set; }
     
     [Display("Target native language")]
-    public IEnumerable<string> TargetNativeLanguage { get; set; }
+    public List<string> TargetNativeLanguage { get; set; }
 }

@@ -74,7 +74,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
                     sourceNativeId = sourceFileRequest.SourceNativeId ?? Guid.NewGuid().ToString(),
                     sourceNativeLanguageCode = sourceFileRequest.SourceNativeLanguageCode,
                     targetNativeIds = sourceFileRequest.TargetNativeIds,
-                    targetNativeLanguageCodes = sourceFileRequest.TargetNativeLanguage.ToArray(),
+                    targetNativeLanguageCodes = sourceFileRequest.TargetNativeLanguage,
                     wordCount = sourceFileRequest.WordCount,
                     extendedMetadata = metadata,
                     fmsFileId = uploadResponse.FmsFileId
