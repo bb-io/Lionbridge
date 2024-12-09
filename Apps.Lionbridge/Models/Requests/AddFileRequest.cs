@@ -14,6 +14,9 @@ public class AddFileRequest
     [Display("Target native language")]
     public string TargetNativeLanguage { get; set; }
 
+    [Display("Target native languages")]
+    public IEnumerable<string>? TargetNativeLanguages { get; set; }
+
     public AddFileRequest()
     { }
     
@@ -21,6 +24,15 @@ public class AddFileRequest
     {
         File = request.File;
         FileName = request.FileName;
-        TargetNativeLanguage = request.TargetNativeLanguage;
+        if (request.TargetNativeLanguage != null && request.TargetNativeLanguage.Count() == 1)
+        {
+            TargetNativeLanguage = request.TargetNativeLanguage.First();
+            TargetNativeLanguages = null;
+        }
+        else
+        {
+            TargetNativeLanguages = request.TargetNativeLanguage;
+            TargetNativeLanguage = TargetNativeLanguages?.FirstOrDefault() ?? string.Empty;
+        }
     }
 }

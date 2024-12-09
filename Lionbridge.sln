@@ -5,18 +5,27 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apps.Lionbridge", "Apps.Lionbridge\Apps.Lionbridge.csproj", "{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{2FF2B0E6-42B5-4230-9F78-FFE841A4EF53}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2} = {FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FF2B0E6-42B5-4230-9F78-FFE841A4EF53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FF2B0E6-42B5-4230-9F78-FFE841A4EF53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FF2B0E6-42B5-4230-9F78-FFE841A4EF53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FF2B0E6-42B5-4230-9F78-FFE841A4EF53}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
