@@ -8,6 +8,7 @@ using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.Sdk.Utils.Extensions.Http;
+using Microsoft.VisualBasic;
 using RestSharp;
 
 namespace Apps.Lionbridge.Actions;
@@ -25,7 +26,8 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
                 description = input.Description,
                 providerId = input.ProviderId,
                 extendedMetadata = EnumerableExtensions.ToDictionary(input.MetadataKeys, input.MetadataValues),
-                labels = EnumerableExtensions.ToDictionary(input.LabelKeys, input.LabelValues)
+                labels = EnumerableExtensions.ToDictionary(input.LabelKeys, input.LabelValues),
+                DueDate = input.dueDate.HasValue ? input.dueDate.Value.ToString("yyyy-MM-dd") : null
             });
 
         return await Client.ExecuteWithErrorHandling<JobDto>(request);
