@@ -4,6 +4,7 @@ using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
 using Blackbird.Applications.Sdk.Common.Authentication;
 using Blackbird.Applications.Sdk.Utils.Extensions.Sdk;
+using Blackbird.Applications.Sdk.Utils.Extensions.String;
 using Blackbird.Applications.Sdk.Utils.RestSharp;
 using Newtonsoft.Json;
 using RestSharp;
@@ -17,7 +18,7 @@ public class LionbridgeClient : BlackBirdRestClient
 
     public LionbridgeClient(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders)
         : base(new RestClientOptions
-            { ThrowOnAnyError = false, BaseUrl = new Uri("https://content-api.staging.lionbridge.com/v2") })
+            { ThrowOnAnyError = false, BaseUrl = authenticationCredentialsProviders.First(c => c.KeyName == CredNames.BaseUrl).Value.ToUri() })
     {
         var accessToken = GetAccessToken(authenticationCredentialsProviders);
         this.AddDefaultHeader("Authorization", $"Bearer {accessToken}"); 

@@ -15,14 +15,28 @@ public class ConnectionDefinition : IConnectionDefinition
             ConnectionProperties = new List<ConnectionProperty>
             {
                 new(CredNames.ClientId) { DisplayName = "Client ID" },
-                new(CredNames.ClientSecret) { DisplayName = "Client secret", Sensitive = true }
+                new(CredNames.ClientSecret) { DisplayName = "Client secret", Sensitive = true },
+                new(CredNames.BaseUrl)
+                {
+                    DisplayName="Base Url",
+                    Description = "Select the base URL for Lionbridge API",
+                    DataItems= [new("https://content-api.staging.lionbridge.com/v2", "Staging environment"),
+                                new("https://contentapi.lionbridge.com/v2","Production Environment")]
+                }
             }
         }
     };
 
-    public IEnumerable<AuthenticationCredentialsProvider> CreateAuthorizationCredentialsProviders(
-        Dictionary<string, string> values)
-        => values.Select(x =>
-                new AuthenticationCredentialsProvider(x.Key, x.Value))
-            .ToList();
+    public IEnumerable<AuthenticationCredentialsProvider> CreateAuthorizationCredentialsProviders(Dictionary<string, string> values)
+    {
+        var clientId = values.First(v => v.Key == CredNames.ClientId);
+        yield return new AuthenticationCredentialsProvider(clientId.Key, clientId.Value);
+
+        var clientSecret = values.First(v => v.Key == CredNames.ClientSecret);
+        yield return new AuthenticationCredentialsProvider(clientSecret.Key, clientSecret.Value);
+
+        var baseUrl = values.First(v => v.Key == CredNames.BaseUrl);
+        yield return new AuthenticationCredentialsProvider(baseUrl.Key, baseUrl.Value);
+    }
+       
 }
