@@ -27,7 +27,7 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
                 providerId = input.ProviderId,
                 extendedMetadata = EnumerableExtensions.ToDictionary(input.MetadataKeys, input.MetadataValues),
                 labels = EnumerableExtensions.ToDictionary(input.LabelKeys, input.LabelValues),
-                DueDate = input.dueDate.HasValue ? input.dueDate.Value.ToString("yyyy-MM-dd") : null
+                dueDate = input.dueDate.HasValue ? input.dueDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ") : null
             });
 
         return await Client.ExecuteWithErrorHandling<JobDto>(request);
