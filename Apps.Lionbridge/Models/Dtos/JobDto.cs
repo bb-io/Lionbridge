@@ -48,4 +48,7 @@ public class JobDto
     
     [Display("Global tracking ID")]
     public string GlobalTrackingId { get; set; }
+
+    [Display("Due date")]
+    public DateTime? dueDate { get; set; }
 }

@@ -21,7 +21,7 @@ public class ConnectionDefinition : IConnectionDefinition
                     DisplayName="Base Url",
                     Description = "Select the base URL for Lionbridge API",
                     DataItems= [new("https://content-api.staging.lionbridge.com/v2", "Staging environment"),
-                                new("https://contentapi.lionbridge.com/v2","Production Environment")]
+                                new("https://contentapi.lionbridge.com/v2","Production environment")]
                 }
             }
         }
