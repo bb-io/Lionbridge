@@ -10,6 +10,6 @@ public class JobStatusUpdatedHandler : BaseWebhookHandler
     
     protected override string[] GetStatusCodes()
     {
-        return ["IN_TRANSLATION", "CANCELLED", "SENT_TO_PROVIDER"];
+        return ["CREATED", "SENDING", "SENT_TO_PROVIDER", "IN_TRANSLATION", "CANCELLED", "COMPLETED"];
     }
 }

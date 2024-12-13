@@ -8,6 +8,7 @@ using Apps.Lionbridge.Webhooks.Responses;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.Sdk.Common.Webhooks;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Apps.Lionbridge.Webhooks;
 
@@ -48,8 +49,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
             return preflightResponse;
         }
         
-        var statuses = input.StatusCodes ?? new List<string> { "IN_TRANSLATION" };
-        if (!statuses.Contains(data.StatusCode))
+        if (input.StatusCodes != null && !input.StatusCodes.Contains(data.StatusCode))
         {
             return preflightResponse;
         }
@@ -88,8 +88,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
             ReceivedWebhookRequestType = WebhookRequestType.Preflight
         };
         
-        var statuses = requests.StatusCodes ?? new List<string> { "REVIEW_TRANSLATION" };
-        if (!statuses.Contains(data.StatusCode))
+        if (requests.StatusCodes != null && !requests.StatusCodes.Contains(data.StatusCode))
         {
             return preflightResponse;
         }
@@ -99,8 +98,13 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
             return preflightResponse;
         }
 
+        if (requests.RequestIds != null && !requests.RequestIds.Any(x => data.RequestIds.Contains(x)))
+        {
+            return preflightResponse;
+        }
+
         var jobDto = await GetJobDto(data.JobId);
-        var requestDtos = await GetRequests(data.JobId, data.RequestIds);
+        var requestDtos = await GetRequests(data.JobId, data.RequestIds.Where(x => requests.RequestIds.Contains(x)));
         return new WebhookResponse<RequestStatusUpdatedResponse>
         {
             HttpResponseMessage = null,
