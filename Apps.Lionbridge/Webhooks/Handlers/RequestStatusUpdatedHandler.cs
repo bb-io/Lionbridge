@@ -9,6 +9,6 @@ public class RequestStatusUpdatedHandler : BaseWebhookHandler
     public RequestStatusUpdatedHandler(InvocationContext invocationContext) : base(invocationContext, SubscriptionEvent) { }
     protected override string[] GetStatusCodes()
     {
-        return new[] { "IN_TRANSLATION", "CANCELLED", "REVIEW_TRANSLATION" };
+        return new[] { "CREATED", "SENDING", "SENT_TO_PROVIDER", "IN_TRANSLATION", "REVIEW_TRANSLATION", "TRANSLATION_REJECTED", "TRANSLATION_APPROVED", "CANCELLED" };
     }
 }
