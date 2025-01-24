@@ -54,8 +54,8 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
         return response.Embedded.Requests.First();
     }
 
-    [Action("Create file request", Description = "Start a new request to translate a document")]
-    public async Task<RequestDto> CreateFileRequest([ActionParameter] GetJobRequest jobRequest,
+    [Action("Create file requests", Description = "Start a new request to translate a document")]
+    public async Task<GetRequestsResponse> CreateFileRequest([ActionParameter] GetJobRequest jobRequest,
         [ActionParameter] AddSourceFileRequest sourceFileRequest)
     {
         var uploadResponse = await UploadFmsFile(jobRequest.JobId, new AddFileRequest(sourceFileRequest), fileManagementClient);
@@ -81,7 +81,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
                 });
 
         var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
-        return response.Embedded.Requests.First();
+        return new GetRequestsResponse() { Requests = response.Embedded.Requests?.ToList() ?? new List<RequestDto>()};
     }
 
     [Action("Get request", Description = "View details of a specific translation request")]

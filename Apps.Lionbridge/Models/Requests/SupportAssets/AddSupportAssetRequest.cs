@@ -1,4 +1,6 @@
-﻿using Blackbird.Applications.Sdk.Common;
+﻿using Apps.Lionbridge.DataSourceHandlers.EnumDataHandlers;
+using Blackbird.Applications.Sdk.Common;
+using Blackbird.Applications.Sdk.Common.Dictionaries;
 using Blackbird.Applications.Sdk.Common.Files;
 
 namespace Apps.Lionbridge.Models.Requests.SupportAssets;
@@ -11,9 +13,11 @@ public class AddSupportAssetRequest
     public IEnumerable<string>? SourceNativeIds { get; set; }
     
     [Display("Source native language")]
+    [StaticDataSource(typeof(LanguageDataHandler))]
     public string SourceNativeLanguageCode { get; set; }
     
     [Display("Target native language codes")]
+    [StaticDataSource(typeof(LanguageDataHandler))]
     public IEnumerable<string>? TargetNativeLanguageCodes { get; set; }
     
     [Display("Extended metadata keys")] 
