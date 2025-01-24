@@ -1,5 +1,7 @@
-﻿using Apps.Lionbridge.Models.Requests.File;
+﻿using Apps.Lionbridge.DataSourceHandlers.EnumDataHandlers;
+using Apps.Lionbridge.Models.Requests.File;
 using Blackbird.Applications.Sdk.Common;
+using Blackbird.Applications.Sdk.Common.Dictionaries;
 using Blackbird.Applications.Sdk.Common.Files;
 
 namespace Apps.Lionbridge.Models.Requests;
@@ -12,9 +14,11 @@ public class AddFileRequest
     public string? FileName { get; set; }
     
     [Display("Target native language")]
+    [StaticDataSource(typeof(LanguageDataHandler))]
     public string TargetNativeLanguage { get; set; }
 
     [Display("Target native languages")]
+    [StaticDataSource(typeof(LanguageDataHandler))]
     public IEnumerable<string>? TargetNativeLanguages { get; set; }
 
     public AddFileRequest()

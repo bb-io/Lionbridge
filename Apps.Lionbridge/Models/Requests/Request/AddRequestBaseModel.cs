@@ -1,4 +1,6 @@
-﻿using Blackbird.Applications.Sdk.Common;
+﻿using Apps.Lionbridge.DataSourceHandlers.EnumDataHandlers;
+using Blackbird.Applications.Sdk.Common;
+using Blackbird.Applications.Sdk.Common.Dictionaries;
 
 namespace Apps.Lionbridge.Models.Requests.Request;
 
@@ -11,6 +13,7 @@ public class AddRequestBaseModel
     public string? SourceNativeId { get; set; }
     
     [Display("Source native language")]
+    [StaticDataSource(typeof(LanguageDataHandler))]
     public string SourceNativeLanguageCode { get; set; }
     
     [Display("Target native IDs")]

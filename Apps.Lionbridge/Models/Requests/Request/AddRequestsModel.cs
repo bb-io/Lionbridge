@@ -1,4 +1,6 @@
-﻿using Blackbird.Applications.Sdk.Common;
+﻿using Apps.Lionbridge.DataSourceHandlers.EnumDataHandlers;
+using Blackbird.Applications.Sdk.Common;
+using Blackbird.Applications.Sdk.Common.Dictionaries;
 
 namespace Apps.Lionbridge.Models.Requests.Request;
 
@@ -11,12 +13,14 @@ public class AddRequestsModel
     public string SourceNativeId { get; set; }
     
     [Display("Source native language")]
+    [StaticDataSource(typeof(LanguageDataHandler))]
     public string SourceNativeLanguageCode { get; set; }
     
     [Display("Target native IDs")]
     public IEnumerable<string>? TargetNativeIds { get; set; }
     
     [Display("Target native languages")]
+    [StaticDataSource(typeof(LanguageDataHandler))]
     public IEnumerable<string> TargetNativeLanguageCodes { get; set; }
     
     [Display("Word count")]
