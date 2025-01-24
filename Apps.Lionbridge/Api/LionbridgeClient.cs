@@ -3,6 +3,7 @@ using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
 using Blackbird.Applications.Sdk.Common.Authentication;
+using Blackbird.Applications.Sdk.Common.Exceptions;
 using Blackbird.Applications.Sdk.Utils.Extensions.Sdk;
 using Blackbird.Applications.Sdk.Utils.Extensions.String;
 using Blackbird.Applications.Sdk.Utils.RestSharp;
@@ -71,9 +72,9 @@ public class LionbridgeClient : BlackBirdRestClient
             var error = JsonConvert.DeserializeObject<ErrorDto>(response.Content, JsonSettings);
 
             if (error != null)
-                return new(error.Message);
+                return new PluginApplicationException(error.Message);
 
-            return new(response.Content);
+            return new PluginApplicationException(response.Content);
         }
         catch (Exception e)
         {
@@ -94,7 +95,7 @@ public class LionbridgeClient : BlackBirdRestClient
         var response = new RestClient("https://login.lionbridge.com").Execute(request);
         
         if (!response.IsSuccessful)
-            throw new("Failed to authorize. Please check the validity of your client ID and secret.");
+            throw new PluginMisconfigurationException("Failed to authorize. Please check the validity of your client ID and secret.");
 
         var accessToken = JsonConvert.DeserializeObject<AccessTokenDto>(response.Content, JsonSettings).AccessToken;
         return accessToken;
