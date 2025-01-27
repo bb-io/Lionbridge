@@ -11,12 +11,14 @@ public class JobStatusDataHandler : IStaticDataSourceItemHandler
     {
         return new List<DataSourceItem>()
         {
-            new("CREATED", "Created" ),
-            new("SENDING", "Sending" ),
+     //       new("CREATED", "Created" ),
+     //       new("SENDING", "Sending" ),
             new("SENT_TO_PROVIDER", "Sent to provider" ),
             new("IN_TRANSLATION", "In translation" ),
             new("CANCELLED", "Cancelled" ),
-            new("COMPLETED", "Complete"),
+    //        new("COMPLETED", "Complete"),
         };
     }
 }
+
+//Statuses commented out trigger error when subscribing to listener

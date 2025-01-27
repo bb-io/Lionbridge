@@ -56,6 +56,12 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
         }
 
         var jobDto = await GetJobDto(data.JobId);
+
+        if (!String.IsNullOrEmpty(input.JobName) && !jobDto.JobName.ToLower().Contains(input.JobName.ToLower()))
+        {
+            return preflightResponse;
+        }
+
         return new WebhookResponse<JobStatusUpdatedResponse>
         {
             HttpResponseMessage = null,
@@ -105,6 +111,12 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
         }
 
         var jobDto = await GetJobDto(data.JobId);
+        if (!String.IsNullOrEmpty(requests.JobName) && !jobDto.JobName.ToLower().Contains(requests.JobName.ToLower()))
+        {
+            return preflightResponse;
+        }
+
+
         var requestDtos = new List<RequestDto>();
 
         if (requests.RequestIds is null)
