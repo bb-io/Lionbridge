@@ -95,7 +95,7 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
 
-    [Action("Get job extended metadata", Description = "Get extended metadata values for a given key")]
+    [Action("Get job extended metadata", Description = "Get extended metadata value for a given key")]
     public async Task<string> GetJobMetadata([ActionParameter] GetJobRequest request, [ActionParameter] string Key )
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}");
