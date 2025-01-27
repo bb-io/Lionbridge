@@ -12,8 +12,8 @@ public class AddRequestBaseModel
     [Display("Source native ID")]
     public string? SourceNativeId { get; set; }
 
-    [Display("Source content ID")]
-    public string? SourceContentId { get; set; }
+    //[Display("Source content ID")]
+    //public string? SourceContentId { get; set; }
 
     [Display("Source native language")]
     [StaticDataSource(typeof(LanguageDataHandler))]

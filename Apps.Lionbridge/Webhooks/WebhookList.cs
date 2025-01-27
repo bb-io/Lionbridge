@@ -8,6 +8,7 @@ using Apps.Lionbridge.Webhooks.Responses;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.Sdk.Common.Webhooks;
 using Newtonsoft.Json;
+using System.ComponentModel.Design;
 using System.Linq;
 
 namespace Apps.Lionbridge.Webhooks;
@@ -17,7 +18,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
 {
     #region Job Webhooks
 
-    [Webhook("Job status updated", typeof(JobStatusUpdatedHandler),
+    [Webhook("On job status updated", typeof(JobStatusUpdatedHandler),
         Description = "Check for updates on jobs, as you are directly informed when the job is finished or cancelled")]
     public async Task<WebhookResponse<JobStatusUpdatedResponse>> OnJobStatusUpdated(WebhookRequest webhookRequest,
         [WebhookParameter] JobStatusUpdatedInput input)
@@ -104,7 +105,20 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
         }
 
         var jobDto = await GetJobDto(data.JobId);
-        var requestDtos = await GetRequests(data.JobId, data.RequestIds.Where(x => requests.RequestIds.Contains(x)));
+        var requestDtos = new List<RequestDto>();
+
+        if (requests.RequestIds is null)
+        {
+            requestDtos = await GetRequests(data.JobId, data.RequestIds);
+        }
+        else 
+        {
+            requestDtos =  await GetRequests(data.JobId, data.RequestIds.Where(x => requests.RequestIds.Contains(x)));
+        }
+
+        if (requests.StatusCodes != null)
+        { requestDtos = requestDtos.Where(x => requests.StatusCodes.Contains(x.StatusCode)).ToList(); }
+        
         return new WebhookResponse<RequestStatusUpdatedResponse>
         {
             HttpResponseMessage = null,
@@ -125,16 +139,9 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
 
-    private async Task<List<RequestDto>> GetRequests(string jobId, IEnumerable<string> requestIds)
+    private async Task<List<RequestDto>> GetRequests(string jobId, IEnumerable<string>? requestIds)
     {
-        var requests = new List<RequestDto>();
-
-        foreach (var requestId in requestIds)
-        {
-            var request = await GetRequest(jobId, requestId);
-            requests.Add(request);
-        }
-
+        var requests = await GetRequests(jobId, requestIds);   
         return requests;
     }
 }

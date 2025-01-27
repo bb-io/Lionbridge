@@ -45,6 +45,8 @@ Before you can connect you need to make sure that:
 
 - **Unarchive job**: Reverse the archival of a job, bringing it back into active status. This is used when an archived job needs to be revisited or reactivated.
 
+- **Get job extended metadata**: Get the extended metadata value for a given key
+
 ### Requests
 
 - **Get requests**: View a list of your translation requests. This method allows users to retrieve a summary of all translation requests associated with a job.
