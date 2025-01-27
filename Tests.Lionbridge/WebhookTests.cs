@@ -17,7 +17,8 @@ public class WebhookTests : TestBase
     [TestMethod]
     public async Task Subscribes_new_request_webhook()
     {
-        var handler = new RequestStatusUpdatedHandler(InvocationContext);
+        var handler = new RequestStatusUpdatedHandler(InvocationContext, 
+            new Apps.Lionbridge.Webhooks.Inputs.GetRequestsInput { });
 
         await handler.SubscribeAsync(InvocationContext.AuthenticationCredentialsProviders, 
             new Dictionary<string, string>() 
@@ -29,7 +30,9 @@ public class WebhookTests : TestBase
     [TestMethod]
     public async Task Subscribes_new_job_webhook()
     {
-        var handler = new JobStatusUpdatedHandler(InvocationContext);
+        var handler = new JobStatusUpdatedHandler(InvocationContext, 
+        new Apps.Lionbridge.Webhooks.Inputs.JobStatusUpdatedInput 
+        { });
 
         await handler.SubscribeAsync(InvocationContext.AuthenticationCredentialsProviders,
             new Dictionary<string, string>()

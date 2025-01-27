@@ -11,7 +11,10 @@ public class AddRequestBaseModel
     
     [Display("Source native ID")]
     public string? SourceNativeId { get; set; }
-    
+
+    [Display("Source content ID")]
+    public string? SourceContentId { get; set; }
+
     [Display("Source native language")]
     [StaticDataSource(typeof(LanguageDataHandler))]
     public string SourceNativeLanguageCode { get; set; }
@@ -27,4 +30,5 @@ public class AddRequestBaseModel
     
     [Display("Metadata values", Description = "Metadata values to be added to the request.")]
     public IEnumerable<string>? MetadataValues { get; set; }
+
 }
