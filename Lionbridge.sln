@@ -3,17 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apps.Lionbridge", "Apps.Lionbridge\Apps.Lionbridge.csproj", "{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{2FF2B0E6-42B5-4230-9F78-FFE841A4EF53}"
-	ProjectSection(ProjectDependencies) = postProject
-		{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2} = {FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apps.Lionbridge", "Apps.Lionbridge\Apps.Lionbridge.csproj", "{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E6DECA46-E551-44AE-9779-0CF98B593DED}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Lionbridge", "Tests.Lionbridge\Tests.Lionbridge.csproj", "{0D0E2484-BA96-4B43-90D2-60520FC66596}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,12 +22,15 @@ Global
 		{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBA85C6C-AC9D-4336-B14A-F14DB9C209E2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2FF2B0E6-42B5-4230-9F78-FFE841A4EF53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2FF2B0E6-42B5-4230-9F78-FFE841A4EF53}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2FF2B0E6-42B5-4230-9F78-FFE841A4EF53}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2FF2B0E6-42B5-4230-9F78-FFE841A4EF53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D0E2484-BA96-4B43-90D2-60520FC66596}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D0E2484-BA96-4B43-90D2-60520FC66596}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D0E2484-BA96-4B43-90D2-60520FC66596}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D0E2484-BA96-4B43-90D2-60520FC66596}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C1BE622C-3F98-410D-92C3-FFEF2ADBE3DB}
 	EndGlobalSection
 EndGlobal

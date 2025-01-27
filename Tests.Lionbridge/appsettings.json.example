@@ -1,0 +1,9 @@
+{
+  "ConnectionDefinition": {
+    "ClientId": "",
+    "ClientSecret": "",
+    "BaseUrl": "https://content-api.staging.lionbridge.com/v2"
+  },
+  "BridgeToken": "",
+  "TestFolder": "C:\\Users\\..."
+}

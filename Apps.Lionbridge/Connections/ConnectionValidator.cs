@@ -9,12 +9,11 @@ public class ConnectionValidator : IConnectionValidator
     public async ValueTask<ConnectionValidationResponse> ValidateConnection(
         IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders, 
         CancellationToken cancellationToken)
-    {
-        var client = new LionbridgeClient(authenticationCredentialsProviders);
-        var request = new LionbridgeRequest("/providers");
-        
+    {        
         try
         {
+            var client = new LionbridgeClient(authenticationCredentialsProviders);
+            var request = new LionbridgeRequest("/providers");
             await client.ExecuteWithErrorHandling(request);
             return new ConnectionValidationResponse
             {
