@@ -72,7 +72,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
                 {
                     requestName = sourceFileRequest.RequestName ?? fileNameWithoutExtension,
                     sourceNativeId = sourceFileRequest.SourceNativeId ?? Guid.NewGuid().ToString(),
-                    sourcecontentId = sourceFileRequest.SourceContentId,
+                   // sourcecontentId = sourceFileRequest.SourceContentId,
                     sourceNativeLanguageCode = sourceFileRequest.SourceNativeLanguageCode,
                     targetNativeIds = sourceFileRequest.TargetNativeIds,
                     targetNativeLanguageCodes = sourceFileRequest.TargetNativeLanguage.ToArray(),

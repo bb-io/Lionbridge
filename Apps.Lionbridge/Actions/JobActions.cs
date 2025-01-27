@@ -6,10 +6,12 @@ using Apps.Lionbridge.Models.Requests.Job;
 using Apps.Lionbridge.Models.Requests.Provider;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
+using Blackbird.Applications.Sdk.Common.Exceptions;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.Sdk.Utils.Extensions.Http;
 using Microsoft.VisualBasic;
 using RestSharp;
+using System.Text.Json;
 
 namespace Apps.Lionbridge.Actions;
 
@@ -91,6 +93,32 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
             .WithJsonBody(new { providerId = providerRequest.ProviderId });
 
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
+    }
+
+    [Action("Get job extended metadata", Description = "Get extended metadata values for a given key")]
+    public async Task<string> GetJobMetadata([ActionParameter] GetJobRequest request, [ActionParameter] string Key )
+    {
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}");
+        var response = await Client.ExecuteWithErrorHandling(apiRequest);
+        using JsonDocument doc = JsonDocument.Parse(response.Content);
+        JsonElement root = doc.RootElement;
+        if (root.TryGetProperty("extendedMetadata", out JsonElement extendedMetadata) &&
+            extendedMetadata.ValueKind == JsonValueKind.Object)
+        {
+            var metadata = new Dictionary<string, string>();
+            Dictionary<string, string> metadataDict = JsonSerializer.Deserialize<Dictionary<string, string>>(extendedMetadata.GetRawText());
+            if (metadataDict.TryGetValue(Key, out string specificValue))
+            {
+                return specificValue;
+            }
+            else
+            {
+                throw new PluginMisconfigurationException("The specified key was not found within the extended metadata");
+            }
+
+        }
+
+        throw new PluginMisconfigurationException("No extended metata was found for Job ID "+ request.JobId);
     }
 
     [Action("Archive job", Description = "Move a job to storage for safekeeping")]
