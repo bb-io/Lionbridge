@@ -11,14 +11,16 @@ public class RequestStatusDataHandler : IStaticDataSourceItemHandler
     {
         return new List<DataSourceItem>()
         {
-            new("CREATED", "Created" ),
-            new("SENDING", "Sending" ),
-            new("SENT_TO_PROVIDER", "Sent to provider" ),
+         //   new("CREATED", "Created" ),
+         //   new("SENDING", "Sending" ),
+         //   new("SENT_TO_PROVIDER", "Sent to provider" ),
             new("IN_TRANSLATION", "In translation" ),
             new("REVIEW_TRANSLATION", "Ready for review" ),
-            new("TRANSLATION_REJECTED", "Translation rejected" ),
-            new("TRANSLATION_APPROVED", "Translation approved"),
+          //  new("TRANSLATION_REJECTED", "Translation rejected" ),
+         //   new("TRANSLATION_APPROVED", "Translation approved"),
             new("CANCELLED", "Cancelled"),
         };
     }
 }
+
+//Statuses commented out trigger error when subscribing to listener

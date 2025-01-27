@@ -16,4 +16,7 @@ public class GetRequestsInput
     
     [Display("Status codes"), StaticDataSource(typeof(RequestStatusDataHandler))]
     public IEnumerable<string>? StatusCodes { get; set; }
+
+    [Display("Job name contains")]
+    public string? JobName { get; set; }
 }
