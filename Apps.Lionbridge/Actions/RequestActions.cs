@@ -179,7 +179,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
 
         }
 
-        throw new PluginMisconfigurationException("No extended metata was found for Request ID " + request.RequestId);
+        throw new PluginMisconfigurationException("No extended metadata was found for Request ID " + request.RequestId);
     }
 
     private async Task<string> CreateTranslationContent(string jobId, IEnumerable<string>? keys,
