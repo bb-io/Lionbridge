@@ -95,7 +95,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
             ReceivedWebhookRequestType = WebhookRequestType.Preflight
         };
         
-        if (requests.StatusCodes != null && !requests.StatusCodes.Contains(data.StatusCode))
+        if (requests.StatusCodes != null && !requests.StatusCodes.Any(x => data.StatusCode == x))
         {
             return preflightResponse;
         }
@@ -121,11 +121,11 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
 
         if (requests.RequestIds is null)
         {
-            requestDtos = await GetRequests(data.JobId, data.RequestIds);
+            requestDtos = await GetRequestsDto(data.JobId, data.RequestIds);
         }
         else 
         {
-            requestDtos =  await GetRequests(data.JobId, data.RequestIds.Where(x => requests.RequestIds.Contains(x)));
+            requestDtos =  await GetRequestsDto(data.JobId, data.RequestIds.Where(x => requests.RequestIds.Contains(x)));
         }
 
         if (requests.StatusCodes != null)
@@ -151,9 +151,9 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
 
-    private async Task<List<RequestDto>> GetRequests(string jobId, IEnumerable<string>? requestIds)
+    private async Task<List<RequestDto>> GetRequestsDto(string jobId, IEnumerable<string>? requestIds)
     {
         var requests = await GetRequests(jobId, requestIds);   
-        return requests;
+        return requests.Requests;
     }
 }
