@@ -30,14 +30,14 @@ public class RequestStatusUpdatedHandler : BaseWebhookHandler, IAfterSubscriptio
     {
         if (input.RequestIds != null && input.RequestIds.Any() && input.StatusCodes != null && input.StatusCodes.Any() && input.JobId != null)
         {
-            
+
             RestRequest apiRequest = new LionbridgeRequest(
         $"{ApiEndpoints.Jobs}/{input.JobId}" + ApiEndpoints.Requests,
         Method.Get);
 
             var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
             var requests = response.Embedded.Requests.ToList();
-            
+
             requests = requests.Where(x => input.RequestIds.Contains(x.RequestId))?.ToList();
             requests = requests?.Where(x => input.StatusCodes.Contains(x.StatusCode))?.ToList();
             return new AfterSubscriptionEventResponse<RequestStatusUpdatedResponse>()

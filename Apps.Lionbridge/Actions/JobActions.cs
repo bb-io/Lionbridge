@@ -118,7 +118,7 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
 
         }
 
-        throw new PluginMisconfigurationException("No extended metata was found for Job ID "+ request.JobId);
+        throw new PluginMisconfigurationException("No extended metadata was found for Job ID "+ request.JobId);
     }
 
     [Action("Archive job", Description = "Move a job to storage for safekeeping")]

@@ -63,6 +63,8 @@ Before you can connect you need to make sure that:
 
 - **Update request content**: Make changes to the details of an existing translation request. This method allows users to modify the content or parameters of a translation request, such as updating the document or changing the target language.
 
+- **Get request extended metadata**: Get the extended metadata value for a given key
+
 ### Source file
 
 - **Retrieve file**: Download a document from a specific request. This method allows for the retrieval of a file associated with a translation request. It checks if the uploaded file is empty and throws an exception if so. If the file has no specific name, it defaults to using the request name with an .xml extension, indicating that the request was likely created from source content. This approach ensures that every document, whether initially named or not, is retrievable and properly identified within the system.

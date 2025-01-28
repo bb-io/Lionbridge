@@ -14,6 +14,8 @@ using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
 using Blackbird.Applications.Sdk.Utils.Extensions.Http;
 using RestSharp;
+using Blackbird.Applications.Sdk.Common.Exceptions;
+using System.Text.Json;
 
 namespace Apps.Lionbridge.Actions;
 
@@ -151,6 +153,33 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
 
         var response = await Client.ExecuteWithErrorHandling<RequestDto>(apiRequest);
         return response;
+    }
+
+    [Action("Get request extended metadata", Description = "Get extended metadata value for a given key")]
+    public async Task<string> GetRequestMetadata([ActionParameter] GetRequest request, [ActionParameter] string Key)
+    {
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}" +
+                                               $"{ApiEndpoints.Requests}/{request.RequestId}");
+        var response =  await Client.ExecuteWithErrorHandling(apiRequest);
+        using JsonDocument doc = JsonDocument.Parse(response.Content);
+        JsonElement root = doc.RootElement;
+        if (root.TryGetProperty("extendedMetadata", out JsonElement extendedMetadata) &&
+            extendedMetadata.ValueKind == JsonValueKind.Object)
+        {
+            var metadata = new Dictionary<string, string>();
+            Dictionary<string, string> metadataDict = JsonSerializer.Deserialize<Dictionary<string, string>>(extendedMetadata.GetRawText());
+            if (metadataDict.TryGetValue(Key, out string specificValue))
+            {
+                return specificValue;
+            }
+            else
+            {
+                throw new PluginMisconfigurationException("The specified key was not found within the extended metadata");
+            }
+
+        }
+
+        throw new PluginMisconfigurationException("No extended metadata was found for Request ID " + request.RequestId);
     }
 
     private async Task<string> CreateTranslationContent(string jobId, IEnumerable<string>? keys,
