@@ -23,14 +23,14 @@ namespace Apps.Lionbridge.Actions;
 public class RequestActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : LionbridgeInvocable(invocationContext)
 {
-    [Action("Get requests", Description = "View a list of your translation requests")]
+    [Action("Search requests", Description = "Given a job, get all related requests and whether they are in review or not")]
     public async Task<GetRequestsResponse> GetRequests([ActionParameter] GetRequestsAsOptional jobRequest)
     {
         return await GetRequests(jobRequest.JobId, jobRequest.RequestIds);
     }
 
     // [Action("Create source content request", Description = "Create a new translation request.")]
-    public async Task<RequestDto> CreateSingleRequest([ActionParameter] AddSourceRequestModel request,
+    public async Task<GetRequestsResponse> CreateSingleRequest([ActionParameter] AddSourceRequestModel request,
         [ActionParameter] GetJobRequest jobRequest)
     {
         string sourceContentId =
@@ -52,14 +52,20 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
                     sourcecontentId = sourceContentId
                 });
 
-        var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
-        return response.Embedded.Requests.First();
+        var response = await Client.Paginate<RequestsWrapper>(apiRequest);
+        var requests = response.SelectMany(x => x.Requests);
+        return new GetRequestsResponse() { Requests = requests ?? new List<RequestDto>() };
     }
 
     [Action("Create file requests", Description = "Start a new request to translate a document")]
     public async Task<GetRequestsResponse> CreateFileRequest([ActionParameter] GetJobRequest jobRequest,
         [ActionParameter] AddSourceFileRequest sourceFileRequest)
     {
+        if (sourceFileRequest.TargetNativeLanguage.Count() > 100)
+        {
+            throw new PluginMisconfigurationException("You can only request a max of 100 target languages. Please reduce the amount of target languages.");
+        }
+
         var uploadResponse = await UploadFmsFile(jobRequest.JobId, new AddFileRequest(sourceFileRequest), fileManagementClient);
 
         string fileName = sourceFileRequest.FileName ?? sourceFileRequest.File.Name;
@@ -83,8 +89,9 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
                     fmsFileId = uploadResponse.FmsFileId
                 });
 
-        var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
-        return new GetRequestsResponse() { Requests = response.Embedded.Requests?.ToList() ?? new List<RequestDto>()};
+        var response = await Client.Paginate<RequestsWrapper>(apiRequest);
+        var requests = response.SelectMany(x => x.Requests);
+        return new GetRequestsResponse() { Requests = requests ?? new List<RequestDto>()};
     }
 
     [Action("Get request", Description = "View details of a specific translation request")]
@@ -103,7 +110,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
         return await Client.ExecuteWithErrorHandling<RequestDto>(apiRequest);
     }
 
-    [Action("Approve request", Description = "Approve a request to send it to the provider")]
+    [Action("Approve requests", Description = "Approve translated content for specific requests")]
     public async Task ApproveRequest([ActionParameter] GetRequests request)
     {
         var apiRequest =
@@ -117,7 +124,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
         await Client.ExecuteWithErrorHandling(apiRequest);
     }
 
-    [Action("Reject request", Description = "Reject a translation request")]
+    [Action("Reject requests", Description = "Reject translated content for specific requests")]
     public async Task RejectRequest([ActionParameter] GetRequests request)
     {
         var apiRequest =
@@ -131,7 +138,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
         await Client.ExecuteWithErrorHandling(apiRequest);
     }
 
-    [Action("Update request content", Description = "Make changes to the details of an existing translation request.")]
+    [Action("Update request details", Description = "Make changes to the details of an existing translation request.")]
     public async Task<RequestDto> UpdateRequestContent([ActionParameter] GetRequest request,
         [ActionParameter] UpdateRequestModel updateRequestContentModel)
     {

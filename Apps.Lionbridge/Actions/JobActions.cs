@@ -78,10 +78,6 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
             job = await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
         }
 
-        //if (request.JobCompletionStatus != null)
-        //{
-        //    job = await UpdateJobCompletionStatus(jobRequest.JobId, request.JobCompletionStatus, job);
-        //}
         return job ?? await GetJob(jobRequest);
     }
 
@@ -115,7 +111,6 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
             {
                 throw new PluginMisconfigurationException("The specified key was not found within the extended metadata");
             }
-
         }
 
         throw new PluginMisconfigurationException("No extended metadata was found for Job ID "+ request.JobId);
@@ -135,15 +130,17 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
 
-    private async Task<JobDto> CompleteJob(string jobId)
+    [Action("Complete job", Description = "Signal to Lionbridge that the job is completed")]
+    public async Task<JobDto> CompleteJob([ActionParameter] GetJobRequest request)
     {
-        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobId}/complete", Method.Put);
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/complete", Method.Put);
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
 
-    private async Task<JobDto> IntranslateJob(string jobId)
+    [Action("Un-complete job", Description = "Signal to Lionbridge that the job is not completed")]
+    public async Task<JobDto> IntranslateJob([ActionParameter] GetJobRequest request)
     {
-        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{jobId}/intranslation", Method.Put);
+        var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/intranslation", Method.Put);
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
     
@@ -154,18 +151,5 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
                (request.LabelKeys != null && request.LabelValues != null) || request.DueDate != null ||
                request.ShouldQuote != null || request.ConnectorName != null ||
                request.ConnectorVersion != null || request.ServiceType != null;
-    }
-    
-    private async Task<JobDto?> UpdateJobCompletionStatus(string jobId, string status, JobDto? currentJob)
-    {
-        switch (status)
-        {
-            case "COMPLETED":
-                return await CompleteJob(jobId);
-            case "IN_TRANSLATION":
-                return await IntranslateJob(jobId);
-            default:
-                return currentJob;
-        }
     }
 }

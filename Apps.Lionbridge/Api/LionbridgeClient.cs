@@ -2,6 +2,7 @@
 using Apps.Lionbridge.Constants;
 using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
+using Apps.Lionbridge.Models.Responses.Request;
 using Blackbird.Applications.Sdk.Common.Authentication;
 using Blackbird.Applications.Sdk.Common.Exceptions;
 using Blackbird.Applications.Sdk.Utils.Extensions.Sdk;
@@ -57,6 +58,27 @@ public class LionbridgeClient : BlackBirdRestClient
     {
         var response = await ExecuteWithErrorHandling(request);
         return JsonConvert.DeserializeObject<T>(response.Content, JsonSettings);
+    }
+
+    public async Task<IEnumerable<T>> Paginate<T>(RestRequest request)
+    {
+        var result = new List<T>();
+
+        while(true)
+        {
+            var response = await ExecuteWithErrorHandling<EmbeddedItemsWrapper<T>>(request);
+            result.Add(response.Embedded);
+
+            if (response?.Links?.Next?.Href != null)
+            {
+                request = new RestRequest(response?.Links?.Next?.Href, Method.Get);
+            } else
+            {
+                break;
+            }
+        }
+
+        return result;
     }
 
     protected override Exception ConfigureErrorException(RestResponse response) 
