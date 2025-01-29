@@ -136,7 +136,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
         };
     }
 
-    [Webhook("On all requests in review", typeof(RequestStatusUpdatedHandler),
+    [Webhook("On all requests in review", typeof(AllRequestsInReviewHandler),
         Description ="Given the job, this event is triggered when all requests of this jobs are in review and they can be downloaded")]
     public async Task<WebhookResponse<RequestStatusUpdatedResponse>> OnAllRequestsCompleted(
         WebhookRequest webhookRequest, [WebhookParameter] CompletedRequestsInput input)
