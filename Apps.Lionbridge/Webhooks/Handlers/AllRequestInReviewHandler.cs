@@ -14,12 +14,12 @@ namespace Apps.Lionbridge.Webhooks.Handlers;
 public class AllRequestsInReviewHandler : BaseWebhookHandler, IAfterSubscriptionWebhookEventHandler<RequestStatusUpdatedResponse>
 {
     const string SubscriptionEvent = "REQUEST_STATUS_UPDATED";
-    CompletedRequestsInput input;
+    private CompletedRequestsInput _input;
 
     public AllRequestsInReviewHandler(InvocationContext invocationContext, [WebhookParameter] CompletedRequestsInput input)
         : base(invocationContext, SubscriptionEvent)
     {
-        input = input;
+        _input = input;
     }
     protected override string[] GetStatusCodes()
     {
@@ -29,7 +29,7 @@ public class AllRequestsInReviewHandler : BaseWebhookHandler, IAfterSubscription
     public async Task<AfterSubscriptionEventResponse<RequestStatusUpdatedResponse>> OnWebhookSubscribedAsync()
     {
         RestRequest apiRequest = new LionbridgeRequest(
-            $"{ApiEndpoints.Jobs}/{input.JobId}" + ApiEndpoints.Requests,
+            $"{ApiEndpoints.Jobs}/{_input.JobId}" + ApiEndpoints.Requests,
             Method.Get);
 
         var response = await Client.Paginate<RequestsWrapper>(apiRequest);
@@ -37,7 +37,7 @@ public class AllRequestsInReviewHandler : BaseWebhookHandler, IAfterSubscription
 
         if (requests.All(x => x.StatusCode == "REVIEW_TRANSLATION"))
         {
-            var jobRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{input.JobId}");
+            var jobRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{_input.JobId}");
             var job = await Client.ExecuteWithErrorHandling<JobDto>(jobRequest);
 
             return new AfterSubscriptionEventResponse<RequestStatusUpdatedResponse>()

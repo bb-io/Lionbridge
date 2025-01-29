@@ -1,5 +1,6 @@
 ﻿using Apps.Lionbridge.Connections;
 using Apps.Lionbridge.Webhooks.Handlers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,5 +40,16 @@ public class WebhookTests : TestBase
             {
                 { "payloadUrl", webhookUrl }
             });
+    }
+
+    [TestMethod]
+    public async Task AllRequestInReview_on_unsubscribe_works()
+    {
+        var handler = new AllRequestsInReviewHandler(InvocationContext, new Apps.Lionbridge.Webhooks.Inputs.CompletedRequestsInput { JobId = "MGhj2DcVl9" });
+
+        var result = await handler.OnWebhookSubscribedAsync();
+
+        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+        Assert.IsTrue(result.Result.Requests.All(x => x.StatusCode == "REVIEW_TRANSLATION"));
     }
 }
