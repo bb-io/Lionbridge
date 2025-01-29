@@ -105,6 +105,7 @@ Before you can connect you need to make sure that:
 
 ## Example
 
+These birds demonstrate the common workflow in the Lionbridge app.
 The first bird initiates a job and creates requests based on files that have been uploaded to Google Drive, and then sends it to the Lionbridge provider using the 'Submit Job' action.
 
 ![Lionbridge-example-1](image/README/Lionbridge-example-1.png)
@@ -113,7 +114,9 @@ The second bird activates when the provider has processed our file (or files), a
 
 ![Lionbridge-example-2](image/README/Lionbridge-example-2.png)
 
-These birds demonstrate the common workflow in the Lionbridge app.
+If you prefer to use one Bird instead of 2, you can use the **On all requests in review** event like so:
+
+![Lionbridge-example-3](image/README/1738156311174.png)
 
 ## Feedback
 
