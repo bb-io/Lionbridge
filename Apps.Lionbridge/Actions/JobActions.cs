@@ -134,6 +134,7 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
     public async Task<JobDto> CompleteJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/complete", Method.Put);
+        apiRequest.AddHeader("Content-type", "application/json");
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
 
@@ -141,6 +142,7 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
     public async Task<JobDto> IntranslateJob([ActionParameter] GetJobRequest request)
     {
         var apiRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{request.JobId}/intranslation", Method.Put);
+        apiRequest.AddHeader("Content-type", "application/json");
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
     

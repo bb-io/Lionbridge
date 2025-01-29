@@ -13,20 +13,20 @@ using Tests.Lionbridge.Base;
 namespace Tests.Lionbridge;
 
 [TestClass]
-public class RequestTests : TestBase
+public class JobTests : TestBase
 {
     public const string JobId = "FZwlbFcVlD";
 
     [TestMethod]
-    public async Task Search_requests_works()
+    public async Task Complete_job_works()
     {
-        var actions = new RequestActions(InvocationContext, FileManager);
+        var actions = new JobActions(InvocationContext);
 
-        var result = await actions.GetRequests(new Apps.Lionbridge.Models.Requests.Request.GetRequestsAsOptional { JobId = JobId });
-
-        Assert.IsTrue(result.Requests.Count() > 0);
+        var result = await actions.CompleteJob(new GetJobRequest { JobId = JobId });
 
         Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+
+        Assert.IsTrue(result.StatusCode == "COMPLETED");
 
     }
 }
