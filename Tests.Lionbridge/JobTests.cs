@@ -15,7 +15,7 @@ namespace Tests.Lionbridge;
 [TestClass]
 public class JobTests : TestBase
 {
-    public const string JobId = "FZwlbFcVlD";
+    public const string JobId = "LCfSMZcVlS";
 
     [TestMethod]
     public async Task Complete_job_works()
@@ -27,6 +27,19 @@ public class JobTests : TestBase
         Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
 
         Assert.IsTrue(result.StatusCode == "COMPLETED");
+
+    }
+
+    [TestMethod]
+    public async Task Unarchive_job_works()
+    {
+        var actions = new JobActions(InvocationContext);
+
+        var result = await actions.UnarchiveJob(new GetJobRequest { JobId = JobId });
+
+        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+
+        Assert.IsFalse(result.Archived);
 
     }
 }
