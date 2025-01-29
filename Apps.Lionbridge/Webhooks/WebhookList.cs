@@ -158,7 +158,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
 
         var jobDto = await GetJobDto(data.JobId);
 
-        var requestDtos = await GetRequestsDto(data.JobId, new List<string>());
+        var requestDtos = await GetRequestsDto(data.JobId, null);
         var allCompleted = requestDtos.All(x => x.StatusCode == "REVIEW_TRANSLATION");
 
         if (!allCompleted)
