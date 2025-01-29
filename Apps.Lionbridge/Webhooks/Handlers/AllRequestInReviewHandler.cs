@@ -11,15 +11,15 @@ using System.Net;
 
 namespace Apps.Lionbridge.Webhooks.Handlers;
 
-public class RequestStatusUpdatedHandler : BaseWebhookHandler, IAfterSubscriptionWebhookEventHandler<RequestStatusUpdatedResponse>
+public class AllRequestsInReviewHandler : BaseWebhookHandler, IAfterSubscriptionWebhookEventHandler<RequestStatusUpdatedResponse>
 {
     const string SubscriptionEvent = "REQUEST_STATUS_UPDATED";
-    GetRequestsInput input;
+    CompletedRequestsInput input;
 
-    public RequestStatusUpdatedHandler(InvocationContext invocationContext, [WebhookParameter] GetRequestsInput requests)
+    public AllRequestsInReviewHandler(InvocationContext invocationContext, [WebhookParameter] CompletedRequestsInput input)
         : base(invocationContext, SubscriptionEvent)
     {
-        input = requests;
+        input = input;
     }
     protected override string[] GetStatusCodes()
     {
@@ -28,19 +28,15 @@ public class RequestStatusUpdatedHandler : BaseWebhookHandler, IAfterSubscriptio
 
     public async Task<AfterSubscriptionEventResponse<RequestStatusUpdatedResponse>> OnWebhookSubscribedAsync()
     {
-        if (input.RequestIds != null && input.RequestIds.Any() && input.StatusCodes != null && input.StatusCodes.Any() && input.JobId != null)
+        RestRequest apiRequest = new LionbridgeRequest(
+            $"{ApiEndpoints.Jobs}/{input.JobId}" + ApiEndpoints.Requests,
+            Method.Get);
+
+        var response = await Client.Paginate<RequestsWrapper>(apiRequest);
+        var requests = response.SelectMany(x => x.Requests);
+
+        if (requests.All(x => x.StatusCode == "REVIEW_TRANSLATION"))
         {
-
-            RestRequest apiRequest = new LionbridgeRequest(
-        $"{ApiEndpoints.Jobs}/{input.JobId}" + ApiEndpoints.Requests,
-        Method.Get);
-
-            var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
-            var requests = response.Embedded.Requests.ToList();
-
-            requests = requests.Where(x => input.RequestIds.Contains(x.RequestId))?.ToList();
-            requests = requests?.Where(x => input.StatusCodes.Contains(x.StatusCode))?.ToList();
-
             var jobRequest = new LionbridgeRequest($"{ApiEndpoints.Jobs}/{input.JobId}");
             var job = await Client.ExecuteWithErrorHandling<JobDto>(jobRequest);
 
@@ -54,6 +50,6 @@ public class RequestStatusUpdatedHandler : BaseWebhookHandler, IAfterSubscriptio
             };
         }
 
-        return null!;
+        return null;
     }
 }
