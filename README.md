@@ -17,7 +17,7 @@ Before you can connect you need to make sure that:
 
 ## Connecting 
 
-1. Navigate to apps and search for Lionbridge. If you cannot find Lionbridge, then click _Add App_ in the top right corner, select Lionbridge, and add the app to your Blackbird environment.
+1. Navigate to apps and search for Lionbridge.
 2. Click _Add Connection_.
 3. Name your connection for future reference, e.g., 'My client'.
 4. In the _API Key_ field, input your API Key
@@ -45,11 +45,15 @@ Before you can connect you need to make sure that:
 
 - **Unarchive job**: Reverse the archival of a job, bringing it back into active status. This is used when an archived job needs to be revisited or reactivated.
 
-- **Get job extended metadata**: Get the extended metadata value for a given key
+- **Get job extended metadata**: Get the extended metadata value for a given key.
+
+- **Complete job**: Signal to Lionbridge that the job is completed.
+
+- **Un-complete job**: Signal to Lionbridge that the job is not completed.
 
 ### Requests
 
-- **Get requests**: View a list of your translation requests. This method allows users to retrieve a summary of all translation requests associated with a job.
+- **Search requests**: View a list of your translation requests. This method allows users to retrieve a summary of all translation requests associated with a job. It will also return whether all requests are *In review* and thus ready to be downloaded
 
 - **Create file request**: Start a new request to translate a document by uploading a document file. If the 'Request name' or 'Source native ID' are not specified, the system generates unique identifiers (GUIDs) for them.
 
@@ -57,13 +61,13 @@ Before you can connect you need to make sure that:
 
 - **Delete request**: Remove a translation request no longer needed. When a translation request is no longer required, this method can be used to delete it from the system, keeping the list of active requests clean and manageable.
 
-- **Approve request**: Approve a request to send it to the provider. Before a translation request is sent out for translation, it can be reviewed and approved through this method, signaling readiness for translation to commence.
+- **Approve requests**: Approve translated content for specific requests. Signaling to Lionbridge that the requests are approved.
 
-- **Reject request**: Reject a translation request. If a translation request is found to be unnecessary or incorrect, it can be rejected, preventing it from being sent to the translation provider.
+- **Reject requests**: Reject translation requests. If a translation request is found to be incorrect, it can be rejected.
 
-- **Update request content**: Make changes to the details of an existing translation request. This method allows users to modify the content or parameters of a translation request, such as updating the document or changing the target language.
+- **Update request details**: Make changes to the details of an existing translation request. This method allows users to modify the content or parameters of a translation request, such as updating the document or changing the target language.
 
-- **Get request extended metadata**: Get the extended metadata value for a given key
+- **Get request extended metadata**: Get the extended metadata value for a given key.
 
 ### Source file
 
@@ -93,9 +97,11 @@ Before you can connect you need to make sure that:
 
 ## Events
 
-- **Job status updated**: This webhook notifies you when a job's status changes, such as when it is completed or cancelled. If specific status codes are not defined, it defaults to triggering only for jobs that are "IN_TRANSLATION". The webhook assesses various conditions like job ID matches, archival status, deletion status, and compares the current status against expected status codes. If conditions are met, detailed information about the job is returned, including its current state.
+- **Job status updated**: This event notifies you when a job's status changes, such as when it is completed or cancelled. If specific status codes are not defined, it defaults to triggering only for jobs that are "IN_TRANSLATION". The event assesses various conditions like job ID matches, archival status, deletion status, and compares the current status against expected status codes. If conditions are met, detailed information about the job is returned, including its current state.
 
-- **On request status updated**: Similar to job status updates, this webhook alerts you when a translation request reaches a certain milestone, like finishing or being cancelled. By default, it is set to activate for requests that are in the "REVIEW_TRANSLATION" status unless otherwise specified. The webhook evaluates the request's compliance with the predefined conditions, such as status codes, job ID relevance, and whether the request IDs match the expected values. Successful validation results in a detailed report on the job and the affected requests, ensuring you're always up-to-date on your translation projects' progress.
+- **On request status updated**: Similar to job status updates, this event alerts you when a translation request reaches a certain milestone, like finishing or being cancelled. By default, it is set to activate for requests that are in the "REVIEW_TRANSLATION" status unless otherwise specified. The webhook evaluates the request's compliance with the predefined conditions, such as status codes, job ID relevance, and whether the request IDs match the expected values. Successful validation results in a detailed report on the job and the affected requests, ensuring you're always up-to-date on your translation projects' progress.
+
+- **On all requests in review**: Given only a Job ID. This event is triggered when all requests in this particular job are in the *In review* status. With this status Lionbridge signals that you can download the target files and approve or reject them. Use this in a checkpoint to wait for all requests to be ready and download all files afterwards.
 
 ## Example
 

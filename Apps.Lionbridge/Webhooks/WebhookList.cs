@@ -116,21 +116,56 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
             return preflightResponse;
         }
 
+        var requestDtos = requests.RequestIds is null ? 
+            await GetRequestsDto(data.JobId, data.RequestIds) : 
+            await GetRequestsDto(data.JobId, data.RequestIds.Where(x => requests.RequestIds.Contains(x)));
 
-        var requestDtos = new List<RequestDto>();
-
-        if (requests.RequestIds is null)
-        {
-            requestDtos = await GetRequestsDto(data.JobId, data.RequestIds);
-        }
-        else 
-        {
-            requestDtos =  await GetRequestsDto(data.JobId, data.RequestIds.Where(x => requests.RequestIds.Contains(x)));
-        }
 
         if (requests.StatusCodes != null)
         { requestDtos = requestDtos.Where(x => requests.StatusCodes.Contains(x.StatusCode)).ToList(); }
         
+        return new WebhookResponse<RequestStatusUpdatedResponse>
+        {
+            HttpResponseMessage = null,
+            ReceivedWebhookRequestType = WebhookRequestType.Default,
+            Result = new RequestStatusUpdatedResponse
+            {
+                Job = jobDto,
+                Requests = requestDtos,
+            }
+        };
+    }
+
+    [Webhook("On all requests in review", typeof(RequestStatusUpdatedHandler),
+        Description ="Given the job, this event is triggered when all requests of this jobs are in review and they can be downloaded")]
+    public async Task<WebhookResponse<RequestStatusUpdatedResponse>> OnAllRequestsCompleted(
+        WebhookRequest webhookRequest, [WebhookParameter] CompletedRequestsInput input)
+    {
+        var data = JsonConvert.DeserializeObject<RequestStatusUpdatedPayload>(webhookRequest.Body.ToString());
+        if (data is null)
+            throw new InvalidCastException(nameof(webhookRequest.Body));
+
+        var preflightResponse = new WebhookResponse<RequestStatusUpdatedResponse>
+        {
+            HttpResponseMessage = null,
+            ReceivedWebhookRequestType = WebhookRequestType.Preflight
+        };
+       
+        if (input.JobId != data.JobId)
+        {
+            return preflightResponse;
+        }
+
+        var jobDto = await GetJobDto(data.JobId);
+
+        var requestDtos = await GetRequestsDto(data.JobId, data.RequestIds);
+        var allCompleted = requestDtos.All(x => x.StatusCode == "REVIEW_TRANSLATION");
+
+        if (!allCompleted)
+        {
+            return preflightResponse;
+        }
+
         return new WebhookResponse<RequestStatusUpdatedResponse>
         {
             HttpResponseMessage = null,
@@ -151,7 +186,7 @@ public class WebhookList(InvocationContext invocationContext) : LionbridgeInvoca
         return await Client.ExecuteWithErrorHandling<JobDto>(apiRequest);
     }
 
-    private async Task<List<RequestDto>> GetRequestsDto(string jobId, IEnumerable<string>? requestIds)
+    private async Task<IEnumerable<RequestDto>> GetRequestsDto(string jobId, IEnumerable<string>? requestIds)
     {
         var requests = await GetRequests(jobId, requestIds);   
         return requests.Requests;

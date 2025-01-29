@@ -111,8 +111,8 @@ public class LionbridgeInvocable : BaseInvocable
             $"{ApiEndpoints.Jobs}/{jobId}" + ApiEndpoints.Requests,
             Method.Get);
 
-        var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(apiRequest);
-        var requests = response.Embedded.Requests.ToList();
+        var response = await Client.Paginate<RequestsWrapper>(apiRequest);
+        var requests = response.SelectMany(x => x.Requests);
         if (requestIds != null)
         {
             var requestIdsAsArray = requestIds as string[] ?? requestIds.ToArray();

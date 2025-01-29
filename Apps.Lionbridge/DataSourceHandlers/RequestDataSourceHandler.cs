@@ -29,10 +29,11 @@ public class RequestDataSourceHandler : LionbridgeInvocable, IAsyncDataSourceIte
         }
 
         var endpoint = $"{ApiEndpoints.Jobs}/{_jobId}{ApiEndpoints.Requests}";
-        var request = new LionbridgeRequest(endpoint);
-        var response = await Client.ExecuteWithErrorHandling<RequestsResponse>(request);
+        var apiRequest = new LionbridgeRequest(endpoint);
+        var response = await Client.Paginate<RequestsWrapper>(apiRequest);
+        var requests = response.SelectMany(x => x.Requests);
 
-        return response.Embedded.Requests.Where(job =>
+        return requests.Where(job =>
                 context.SearchString == null ||
                 job.RequestName.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
             .Select(job => new DataSourceItem(job.RequestId, BuildReadableName(job)));

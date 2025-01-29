@@ -43,7 +43,4 @@ public class UpdateJobRequest
     [Display("Label values", Description = "Label values. For each specified value, a respective key should be added " +
                                           "in the 'Label keys' input parameter.")]
     public IEnumerable<string>? LabelValues { get; set; }
-    
-    //[Display("Job status"), StaticDataSource(typeof(JobStatusDataHandler))]
-    //public string? JobCompletionStatus { get; set; }
 }
