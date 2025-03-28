@@ -49,8 +49,28 @@ public class LionbridgeClient : BlackBirdRestClient
         }
 
         if (!response.IsSuccessStatusCode)
-            throw ConfigureErrorException(response);
+        {
+            var content = response.Content;
 
+            if (response.ContentType?.Contains("text/html", StringComparison.OrdinalIgnoreCase) == true ||
+                content.TrimStart().StartsWith("<"))
+            {
+                var title = ExtractHtmlTagContent(content, "title");
+                var body = ExtractHtmlTagContent(content, "body");
+                var message = $"{title}: \nError Description: {body}";
+
+                if (title.ToLower().Contains("sign in") || title.ToLower().Contains("log in"))
+                {
+                    throw new PluginApplicationException("Failed to authenticate to the XTRF service. Please check your account permissions and try again");
+                }
+
+                throw new PluginApplicationException(message);
+            }
+            else
+            {
+                throw ConfigureErrorException(response);
+            }
+        }
         return response;
     }
     
@@ -121,5 +141,16 @@ public class LionbridgeClient : BlackBirdRestClient
 
         var accessToken = JsonConvert.DeserializeObject<AccessTokenDto>(response.Content, JsonSettings).AccessToken;
         return accessToken;
+    }
+
+    private string ExtractHtmlTagContent(string html, string tagName)
+    {
+        if (string.IsNullOrEmpty(html))
+            return string.Empty;
+
+        var regex = new System.Text.RegularExpressions.Regex($"<{tagName}.*?>(.*?)</{tagName}>",
+                            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        var match = regex.Match(html);
+        return match.Success ? match.Groups[1].Value.Trim() : "N/A";
     }
 }
