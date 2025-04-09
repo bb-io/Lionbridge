@@ -66,10 +66,13 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
             throw new PluginMisconfigurationException("You can only request a max of 100 target languages. Please reduce the amount of target languages.");
         }
 
-        var uploadResponse = await UploadFmsFile(jobRequest.JobId, new AddFileRequest(sourceFileRequest), fileManagementClient);
+        string originalFileName = sourceFileRequest.FileName ?? sourceFileRequest.File.Name;
+        string encodedFileName = Uri.EscapeDataString(originalFileName);
+        sourceFileRequest.FileName = encodedFileName;
 
-        string fileName = sourceFileRequest.FileName ?? sourceFileRequest.File.Name;
-        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(encodedFileName);
+
+        var uploadResponse = await UploadFmsFile(jobRequest.JobId, new AddFileRequest(sourceFileRequest), fileManagementClient);
 
         var metadata =
             EnumerableExtensions.ToDictionary(sourceFileRequest.MetadataKeys, sourceFileRequest.MetadataValues);
