@@ -29,4 +29,23 @@ public class RequestTests : TestBase
         Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
 
     }
+
+    [TestMethod]
+    public async Task Create_File_requests_works()
+    {
+        var actions = new RequestActions(InvocationContext, FileManager);
+
+        var getJob = new GetJobRequest{ JobId= "Gvc6H79dll"};
+        var sourceFile = new AddSourceFileRequest { 
+            File = new FileReference { Name= "test[].html" }, 
+            SourceNativeLanguageCode= "en-gb",
+            TargetNativeLanguage= ["es-es"]
+        };
+        var result = await actions.CreateFileRequest(getJob, sourceFile);
+
+        Assert.IsTrue(result.Requests.Count() > 0);
+
+        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+
+    }
 }
