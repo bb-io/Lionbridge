@@ -12,7 +12,7 @@ using RestSharp;
 
 namespace Apps.Lionbridge.Actions;
 
-[ActionList]
+[ActionList("Translation content")]
 public class TranslationContentActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : LionbridgeInvocable(invocationContext)
 {

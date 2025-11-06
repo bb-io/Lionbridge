@@ -14,7 +14,7 @@ using RestSharp;
 
 namespace Apps.Lionbridge.Actions;
 
-[ActionList]
+[ActionList("Translation memories")]
 public class TranslationMemoryActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : LionbridgeInvocable(invocationContext)
 {

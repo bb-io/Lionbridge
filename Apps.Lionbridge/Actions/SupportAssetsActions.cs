@@ -14,7 +14,7 @@ using RestSharp;
 
 namespace Apps.Lionbridge.Actions;
 
-[ActionList]
+[ActionList("Support assets")]
 public class SupportAssetsActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : LionbridgeInvocable(invocationContext)
 {

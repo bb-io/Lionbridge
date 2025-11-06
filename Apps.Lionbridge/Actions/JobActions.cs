@@ -15,7 +15,7 @@ using System.Text.Json;
 
 namespace Apps.Lionbridge.Actions;
 
-[ActionList]
+[ActionList("Jobs")]
 public class JobActions(InvocationContext invocationContext) : LionbridgeInvocable(invocationContext)
 {
     [Action("Create job", Description = "Create a new job")]

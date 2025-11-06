@@ -9,7 +9,7 @@ using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
 
 namespace Apps.Lionbridge.Actions;
 
-[ActionList]
+[ActionList("Files")]
 public class SourceFileActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : LionbridgeInvocable(invocationContext)
 {
