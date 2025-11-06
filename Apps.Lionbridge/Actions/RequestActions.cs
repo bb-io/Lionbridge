@@ -19,7 +19,7 @@ using System.Text.Json;
 
 namespace Apps.Lionbridge.Actions;
 
-[ActionList]
+[ActionList("Requests")]
 public class RequestActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : LionbridgeInvocable(invocationContext)
 {
