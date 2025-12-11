@@ -61,7 +61,7 @@ public class LionbridgeClient : BlackBirdRestClient
 
                 if (title.ToLower().Contains("sign in") || title.ToLower().Contains("log in"))
                 {
-                    throw new PluginApplicationException("Failed to authenticate to the XTRF service. Please check your account permissions and try again");
+                    throw new PluginApplicationException("Failed to authenticate. Please check your account permissions and try again");
                 }
 
                 throw new PluginApplicationException(message);
@@ -84,18 +84,22 @@ public class LionbridgeClient : BlackBirdRestClient
     {
         var result = new List<T>();
 
-        while(true)
+        while (true)
         {
             var response = await ExecuteWithErrorHandling<EmbeddedItemsWrapper<T>>(request);
             result.Add(response.Embedded);
 
-            if (response?.Links?.Next?.Href != null)
-            {
-                request = new RestRequest(response?.Links?.Next?.Href, Method.Get);
-            } else
-            {
+            var href = response?.Links?.Next?.Href;
+
+            if (string.IsNullOrWhiteSpace(href))
                 break;
+
+            if (href.StartsWith("/v2/", StringComparison.OrdinalIgnoreCase))
+            {
+                href = href.Substring(3);  // remove "/v2"
             }
+
+            request = new RestRequest(href, Method.Get);
         }
 
         return result;
