@@ -38,7 +38,7 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
 
     [Action("Search jobs", Description = "Search Lionbridge jobs using server-side filters")]
     public async Task<IEnumerable<JobDto>> SearchJobs(
-    [ActionParameter] SearchJobsRequest input)
+     [ActionParameter] SearchJobsRequest input)
     {
         var request = new LionbridgeRequest(ApiEndpoints.Jobs);
 
@@ -46,9 +46,11 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         if (!string.IsNullOrWhiteSpace(filter))
             request.AddQueryParameter("filter", filter);
 
-        var response = await Client.ExecuteWithErrorHandling<JobsResponse>(request);
+        var responses = await Client.Paginate<JobsResponse>(request);
 
-        var jobs = response.Embedded.Jobs;
+        var jobs = responses
+            .Where(r => r?.Embedded?.Jobs != null)
+            .SelectMany(r => r.Embedded.Jobs);
 
         if (!string.IsNullOrWhiteSpace(input.JobName))
         {
@@ -58,7 +60,6 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
 
         return jobs;
     }
-
 
     [Action("Delete job", Description = "Delete a job")]
     public async Task DeleteJob([ActionParameter] GetJobRequest request)
