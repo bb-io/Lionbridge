@@ -1,7 +1,9 @@
 ﻿
+using Apps.Lionbridge.DataSourceHandlers;
 using Apps.Lionbridge.DataSourceHandlers.EnumDataHandlers;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Dictionaries;
+using Blackbird.Applications.Sdk.Common.Dynamic;
 
 namespace Apps.Lionbridge.Models.Requests.Job;
 
@@ -18,6 +20,7 @@ public class SearchJobsRequest
     public bool ExcludeCompleted { get; set; }
 
     [Display("Provider ID")]
+    [DataSource(typeof(ProviderDataSourceHandler))]
     public string? ProviderId { get; set; }
 
     [Display("Due before")]

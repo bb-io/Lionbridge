@@ -36,7 +36,7 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         return await Client.ExecuteWithErrorHandling<JobDto>(request);
     }
 
-    [Action("Search jobs", Description = "Search Lionbridge jobs using server-side filters")]
+    [Action("Search jobs", Description = "List jobs and apply desired filters")]
     public async Task<IEnumerable<JobDto>> SearchJobs(
      [ActionParameter] SearchJobsRequest input)
     {
