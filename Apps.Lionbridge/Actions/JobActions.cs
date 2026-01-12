@@ -57,6 +57,12 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
                 j.JobName?.Contains(input.JobName, StringComparison.OrdinalIgnoreCase) == true);
         }
 
+        if (!string.IsNullOrWhiteSpace(input.StatusCode))
+        {
+            jobs = jobs.Where(j =>
+                string.Equals(j.StatusCode, input.StatusCode, StringComparison.OrdinalIgnoreCase));
+        }
+
         return jobs;
     }
 
