@@ -31,6 +31,8 @@ Before you can connect you need to make sure that:
 
 ### Jobs
 
+- **Search jobs**: List jobs and apply desired filters (status, provider, submission and creation date).
+
 - **Create job**: Create a new job by providing details such as the job's name, description, provider ID, and any specific metadata. This action initiates a new job within the system, setting it up for further operations like submission or updating.
 
 - **Delete job**: Remove an existing job from the system using its unique job ID. This action is irreversible and should be used when a job is no longer needed or was created in error.

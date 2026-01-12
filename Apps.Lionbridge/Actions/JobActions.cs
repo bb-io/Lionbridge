@@ -4,6 +4,7 @@ using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
 using Apps.Lionbridge.Models.Requests.Job;
 using Apps.Lionbridge.Models.Requests.Provider;
+using Apps.Lionbridge.Models.Responses.Job;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Exceptions;
@@ -33,6 +34,36 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
             });
 
         return await Client.ExecuteWithErrorHandling<JobDto>(request);
+    }
+
+    [Action("Search jobs", Description = "List jobs and apply desired filters")]
+    public async Task<IEnumerable<JobDto>> SearchJobs(
+     [ActionParameter] SearchJobsRequest input)
+    {
+        var request = new LionbridgeRequest(ApiEndpoints.Jobs);
+
+        var filter = JobsFilterBuilder.Build(input);
+        if (!string.IsNullOrWhiteSpace(filter))
+            request.AddQueryParameter("filter", filter);
+
+        var pages = await Client.Paginate<JobsEmbedded>(request);
+
+        var jobs = pages.SelectMany(p => p.Jobs);
+
+
+        if (!string.IsNullOrWhiteSpace(input.JobName))
+        {
+            jobs = jobs.Where(j =>
+                j.JobName?.Contains(input.JobName, StringComparison.OrdinalIgnoreCase) == true);
+        }
+
+        if (!string.IsNullOrWhiteSpace(input.StatusCode))
+        {
+            jobs = jobs.Where(j =>
+                string.Equals(j.StatusCode, input.StatusCode, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return jobs;
     }
 
     [Action("Delete job", Description = "Delete a job")]
