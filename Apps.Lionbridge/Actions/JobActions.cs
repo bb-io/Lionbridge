@@ -46,11 +46,10 @@ public class JobActions(InvocationContext invocationContext) : LionbridgeInvocab
         if (!string.IsNullOrWhiteSpace(filter))
             request.AddQueryParameter("filter", filter);
 
-        var responses = await Client.Paginate<JobsResponse>(request);
+        var pages = await Client.Paginate<JobsEmbedded>(request);
 
-        var jobs = responses
-            .Where(r => r?.Embedded?.Jobs != null)
-            .SelectMany(r => r.Embedded.Jobs);
+        var jobs = pages.SelectMany(p => p.Jobs);
+
 
         if (!string.IsNullOrWhiteSpace(input.JobName))
         {
