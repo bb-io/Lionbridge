@@ -26,6 +26,18 @@ namespace Apps.Lionbridge.Extensions
             if (input.SubmittedBefore.HasValue)
                 filters.Add($"submittedDate lt '{input.SubmittedBefore.Value:yyyy-MM-dd}'");
 
+            if (input.CreatedAfter.HasValue)
+            {
+                filters.Add(
+                    $"createdDate gt '{input.CreatedAfter.Value:yyyy-MM-ddTHH:mm:ss}'");
+            }
+
+            if (input.CreatedBefore.HasValue)
+            {
+                filters.Add(
+                    $"createdDate lt '{input.CreatedBefore.Value:yyyy-MM-ddTHH:mm:ss}'");
+            }
+
             return filters.Any()
                 ? string.Join(" and ", filters)
                 : null;

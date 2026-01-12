@@ -29,4 +29,10 @@ public class SearchJobsRequest
     [Display("Submitted before")]
     public DateTime? SubmittedBefore { get; set; }
 
+    [Display("Created after")]
+    public DateTime? CreatedAfter { get; set; }
+
+    [Display("Created before")]
+    public DateTime? CreatedBefore { get; set; }
+
 }
