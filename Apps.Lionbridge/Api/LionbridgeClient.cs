@@ -86,7 +86,10 @@ public class LionbridgeClient : BlackBirdRestClient
 
         while (true)
         {
-            var response = await ExecuteWithErrorHandling<EmbeddedItemsWrapper<T>>(request);
+            var response = await ExecuteWithErrorHandling<EmbeddedItemsWrapper<T>>(request); 
+            if (response.Embedded == null) 
+                break;
+
             result.Add(response.Embedded);
 
             var href = response?.Links?.Next?.Href;
@@ -143,11 +146,11 @@ public class LionbridgeClient : BlackBirdRestClient
         if (!response.IsSuccessful)
             throw new PluginMisconfigurationException("Failed to authorize. Please check the validity of your client ID and secret.");
 
-        var accessToken = JsonConvert.DeserializeObject<AccessTokenDto>(response.Content, JsonSettings).AccessToken;
-        return accessToken;
+        var tokenDto = JsonConvert.DeserializeObject<AccessTokenDto>(response.Content, JsonSettings);
+        return tokenDto?.AccessToken ?? throw new Exception("Access token is missing in GetAccessToken response");
     }
 
-    private string ExtractHtmlTagContent(string html, string tagName)
+    private static string ExtractHtmlTagContent(string html, string tagName)
     {
         if (string.IsNullOrEmpty(html))
             return string.Empty;
