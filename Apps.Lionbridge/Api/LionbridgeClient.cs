@@ -9,12 +9,16 @@ using Blackbird.Applications.Sdk.Utils.Extensions.Sdk;
 using Blackbird.Applications.Sdk.Utils.Extensions.String;
 using Blackbird.Applications.Sdk.Utils.RestSharp;
 using Newtonsoft.Json;
+using Polly;
 using RestSharp;
 
 namespace Apps.Lionbridge.Api;
 
 public class LionbridgeClient : BlackBirdRestClient
 {
+    private static readonly TimeSpan PaginationDelay = TimeSpan.FromMilliseconds(200);
+    private readonly ResiliencePipeline<RestResponse> _retryPolicy;
+
     protected override JsonSerializerSettings JsonSettings =>
         new() { MissingMemberHandling = MissingMemberHandling.Ignore };
 
@@ -23,34 +27,17 @@ public class LionbridgeClient : BlackBirdRestClient
             { ThrowOnAnyError = false, BaseUrl = authenticationCredentialsProviders.First(c => c.KeyName == CredNames.BaseUrl).Value.ToUri() })
     {
         var accessToken = GetAccessToken(authenticationCredentialsProviders);
-        this.AddDefaultHeader("Authorization", $"Bearer {accessToken}"); 
+        this.AddDefaultHeader("Authorization", $"Bearer {accessToken}");
+        _retryPolicy = LionbridgePollyPolicies.GetRetryPolicy();
     }
 
     public override async Task<RestResponse> ExecuteWithErrorHandling(RestRequest request)
     {
-        var response = await ExecuteAsync(request);
-
-        if (response.StatusCode == HttpStatusCode.TooManyRequests ||
-            response.StatusCode == HttpStatusCode.ServiceUnavailable)
-        {
-            const int scalingFactor = 2;
-            var retryAfterMilliseconds = 1000;
-
-            for (int i = 0; i < 5; i++)
-            {
-                await Task.Delay(retryAfterMilliseconds);
-                response = await ExecuteAsync(request);
-
-                if (response.IsSuccessStatusCode)
-                    break;
-
-                retryAfterMilliseconds *= scalingFactor;
-            }
-        }
+        var response = await ExecuteSafeAsync(request);
 
         if (!response.IsSuccessStatusCode)
         {
-            var content = response.Content;
+            var content = response.Content ?? string.Empty;
 
             if (response.ContentType?.Contains("text/html", StringComparison.OrdinalIgnoreCase) == true ||
                 content.TrimStart().StartsWith("<"))
@@ -102,6 +89,7 @@ public class LionbridgeClient : BlackBirdRestClient
                 href = href.Substring(3);  // remove "/v2"
             }
 
+            await Task.Delay(PaginationDelay);
             request = new RestRequest(href, Method.Get);
         }
 
@@ -159,5 +147,18 @@ public class LionbridgeClient : BlackBirdRestClient
                             System.Text.RegularExpressions.RegexOptions.IgnoreCase);
         var match = regex.Match(html);
         return match.Success ? match.Groups[1].Value.Trim() : "N/A";
+    }
+
+    private async Task<RestResponse> ExecuteSafeAsync(RestRequest request)
+    {
+        try
+        {
+            return await _retryPolicy.ExecuteAsync(_ => new ValueTask<RestResponse>(ExecuteAsync(request)),
+                CancellationToken.None);
+        }
+        catch (Exception ex) when (ex is not PluginApplicationException)
+        {
+            throw new PluginApplicationException($"Request failed: {ex.Message}", ex);
+        }
     }
 }
