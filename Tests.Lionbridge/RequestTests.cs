@@ -22,7 +22,7 @@ public class RequestTests : TestBase
     {
         var actions = new RequestActions(InvocationContext, FileManager);
 
-        var result = await actions.GetRequests(new Apps.Lionbridge.Models.Requests.Request.GetRequestsAsOptional { JobId = JobId });
+        var result = await actions.GetRequests(new Apps.Lionbridge.Models.Requests.Request.GetRequestsAsOptional { JobId = JobId },null);
 
         Assert.IsTrue(result.Requests.Count() > 0);
 
