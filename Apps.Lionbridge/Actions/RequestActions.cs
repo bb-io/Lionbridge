@@ -1,5 +1,6 @@
 ﻿using Apps.Lionbridge.Api;
 using Apps.Lionbridge.Constants;
+using Apps.Lionbridge.DataSourceHandlers.EnumDataHandlers;
 using Apps.Lionbridge.Extensions;
 using Apps.Lionbridge.Models.Dtos;
 using Apps.Lionbridge.Models.Requests;
@@ -10,11 +11,12 @@ using Apps.Lionbridge.Models.Responses.Request;
 using Apps.Lionbridge.Models.Responses.TranslationContent;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
-using Blackbird.Applications.Sdk.Common.Invocation;
-using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
-using Blackbird.Applications.Sdk.Utils.Extensions.Http;
-using RestSharp;
+using Blackbird.Applications.Sdk.Common.Dictionaries;
 using Blackbird.Applications.Sdk.Common.Exceptions;
+using Blackbird.Applications.Sdk.Common.Invocation;
+using Blackbird.Applications.Sdk.Utils.Extensions.Http;
+using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
+using RestSharp;
 using System.Text.Json;
 
 namespace Apps.Lionbridge.Actions;
@@ -24,9 +26,20 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
     : LionbridgeInvocable(invocationContext)
 {
     [Action("Search requests", Description = "Given a job, get all related requests and whether they are in review or not")]
-    public async Task<GetRequestsResponse> GetRequests([ActionParameter] GetRequestsAsOptional jobRequest)
+    public async Task<GetRequestsResponse> GetRequests([ActionParameter] GetRequestsAsOptional jobRequest,
+        [ActionParameter][StaticDataSource(typeof(LanguageDataHandler))][Display("Target language")] string targetLanguage)
     {
-        return await GetRequests(jobRequest.JobId, jobRequest.RequestIds);
+        var response = await GetRequests(jobRequest.JobId, jobRequest.RequestIds);
+        var requests = response.Requests;
+        if (!string.IsNullOrEmpty(targetLanguage))
+        {
+            requests = requests.Where(x => x.TargetNativeLanguageCode == targetLanguage).ToList();
+        }
+        else
+        {
+            requests = requests.ToList();
+        }
+        return new GetRequestsResponse{ Requests = requests };
     }
 
     // [Action("Create source content request", Description = "Create a new translation request.")]
