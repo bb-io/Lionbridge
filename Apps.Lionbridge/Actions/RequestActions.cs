@@ -27,7 +27,7 @@ public class RequestActions(InvocationContext invocationContext, IFileManagement
 {
     [Action("Search requests", Description = "Given a job, get all related requests and whether they are in review or not")]
     public async Task<GetRequestsResponse> GetRequests([ActionParameter] GetRequestsAsOptional jobRequest,
-        [ActionParameter][StaticDataSource(typeof(LanguageDataHandler))][Display("Target language")] string targetLanguage)
+        [ActionParameter][StaticDataSource(typeof(LanguageDataHandler))][Display("Target language")] string? targetLanguage)
     {
         var response = await GetRequests(jobRequest.JobId, jobRequest.RequestIds);
         var requests = response.Requests;
